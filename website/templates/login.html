@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../static/styles.css">
+    <title>Skrabble- logowanie</title>
+
+</head>
+
+<body>
+
+    <!--tło-->
+    <div class='box'>
+        <div class='wave -one'></div>
+        <div class='wave -two'></div>
+        <div class='wave -three'></div>
+    </div>
+
+    <!--nagłówek-->
+    <div class="container-fluid text-center">
+        <img src="../static/logo.png">
+    </div>
+
+    <!--karta do logowania-->
+    <div class="container" style="position: relative; width: 30%; margin-top: 10%;">
+        <div class="card" style="position: absolute;
+        top: 50%;
+        width: 100%;
+        text-align: center;
+        font-size: 18px;
+        background-color: dodgerblue;
+        border-radius: 25px;">
+            <div class="card-body">
+                <h4 class="card-title">Zaloguj sie</h4>
+            </div>
+            <div class="card-body">
+                <form name="frm" action="/" method="post">
+                    <!--TODO do czego wysyłam formularz-->
+                    <div class="form-group my-2">
+                        <label for="userName">Nazwa użytkownika</label>
+                        <input name="userName" type="text" class="form-control my-2" id="userName"
+                            placeholder="Podaj nazwę użytkownika">
+                    </div>
+                    <div class="form-group mt-2 mb-0">
+                        <label for="userPassword">Hasło</label>
+                        <input name="userPassword" type="password" class="form-control my-2" id="userPassword"
+                            placeholder="Podaj hasło">
+                        <small name="warrning" id="passSame" class="form-text text-danger"
+                            style="visibility:hidden; position: absolute; bottom: 28%; left: 3%;text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px darkblue"></small>
+                    </div>
+                    <input class="btn btn-primary mt-4" type="submit" id="submitButton" value="Zaloguj"
+                        onclick="return isValid();">
+                </form>
+            </div>
+            <div class="card-footer">Nie masz konta? <a class="text-dark fw-bold" href="/new_account.html">Zarejestruj sie!</a></div>
+            <!--TODO link do rejestracji-->
+        </div>
+    </div>
+
+
+
+
+    <script type="text/javascript">
+        function isValid() {
+
+            let name = document.getElementById("userName");
+            let password = document.getElementById("userPassword");
+            let message = document.getElementById("passSame");
+            let elements = [name, password];
+            let flag = false;
+
+            for (let temp of elements) {
+                if (temp.value.trim() === "") {
+                    temp.classList.add('is-invalid');
+                    flag = true;
+                } else {
+                    for (let temp of elements) {
+                        if (temp.value.trim() !== "") {
+                            try {
+                                temp.classList.remove('is-invalid');
+                            } catch { }
+                            temp.classList.add('is-valid');
+                        }
+                    }
+                }
+            }
+
+            if (flag) {
+                message.innerHTML = "Błąd logowania, pozostawiono puste pole.";
+                message.style.visibility = "visible";
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+</body>
+
+
+</html>

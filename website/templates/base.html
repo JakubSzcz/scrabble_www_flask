@@ -1,0 +1,112 @@
+{% block doc -%}
+<!DOCTYPE html>
+<html>
+<head>
+    {% block head -%}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{% endblock title %}- Znany stomatolog</title>
+    {% endblock head -%}
+    
+    <link rel="icon" type="image/x-icon" href="/static/favicon.png">
+    <link rel="stylesheet" href="../static/styles.css">
+    <!-- bottstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+</head>
+<body style="background-color: #BBDEFB;"> 
+  {% block navbar %} 
+    <nav class="navbar navbar-expand-sm navbar-light bg-info">
+        <!-- Kontener zewnetrzny-->
+        <div class="container justify-content-center">
+          
+            <!--Przycisk-->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Nawigacja"
+            style="margin-right: auto ; margin-left:0;"
+            >
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="navbar-header">
+              <!--logo z linkiem do main_page-->
+              <a class="navbar-brand " href="/">
+                  <img class="d-inline-block align-top" src="..\static\logo.png" width="30" height="30"/>
+                      Znany Stomatolog
+                      <!--TODO zmien ikonke-->
+              </a>
+            </div>
+
+          <!--Collapsible menu-->
+          <div class="collapse navbar-collapse ps-0" id="navbarNav" style="padding-right:0 ;">
+
+            <!--Linki w menu nawigacyjnym-->
+            <ul class="navbar-nav mb-2 mb-lg-0 pe-0">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/">Link 0</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/">Link 1</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/">Link 2</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/create_account">
+                        <!-- dodać if jeśli zalogowany -->Zarejestruj się</a>
+                </li>
+                <!--TODO zrobic ify jak jest zalogowany-->
+            </ul>
+            <!-- Left links -->
+          </div>
+          
+          <!-- Collapsible wrapper -->
+        </div>
+        <!-- Container wrapper -->
+      </nav>
+    {% endblock navbar %}
+
+    <div class="p-4 rounded" style="background-color: rgb(53, 100, 172); margin-bottom: 2rem;">
+        <div class="container">
+            <h5 class="display-5">Lorem ipsum dolor sit amet, consectetur adipiscing elit</h5>
+            <p class="lead">Lorem ipsum dolor sit amet, consectetur adipiscing elit</p>
+            <hr class="my-3">
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit</p>
+        </div>
+    </div>
+
+    {% block body -%}
+
+  <div class="ms-3">
+    {% block content -%}
+
+    {%- endblock content %}
+
+  </div>
+    {% endblock body -%}
+
+    
+        <!-- Footer -->
+        <footer class="text-center text-white mt-4 {% block footerArg %}{% endblock footerArg %}" style="background-color: #0a4275;">
+          <!-- Grid container -->
+          <div class="container p-4 pb-0">
+            <section >
+              <p class="d-flex justify-content-center align-items-center">
+                <span class="me-3">Zarejestruj się za darmo!</span>
+                <button type="button" class="btn btn-outline-light btn-rounded">
+                    <!--TODO if niezalogowany, jak zalogowany to pokazuje sie cos w stylu witamy w serwisie -->
+                  Zarejestruj się!
+                </button>
+              </p>
+            </section>
+          </div>
+          <div class="p-3" style="background-color: rgba(0, 0, 0, 0.2);"></div>
+        </footer>
+        <!-- Footer -->
+      
+      
+    <!-- bottstrap JS!-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+</body>
+
+
+</html>
+{% endblock doc -%}

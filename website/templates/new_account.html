@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+        integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../static/styles.css">
+    <title>Skrabble- rejestracja</title>
+
+</head>
+
+<body>
+
+    <!--tło-->
+    <div class='box'>
+        <div class='wave -one'></div>
+        <div class='wave -two'></div>
+        <div class='wave -three'></div>
+    </div>
+
+    <!--nagłówek-->
+    <div class="container-fluid text-center">
+        <img src="../static/logo.png">
+    </div>
+
+    <!--karta do rejestracji-->
+    <div class="container" style="position: relative; width: 30%; margin-top: 7%;">
+        <div class="card" style="position: absolute;
+        top: 50%;
+        width: 100%;
+        text-align: center;
+        font-size: 18px;
+        background-color: dodgerblue;
+        border-radius: 25px;">
+            <div class="card-body">
+                <h4 class="card-title">Zarejestruj się</h4>
+            </div>
+            <div class="card-body">
+                <form name="frm" action="#" method="post">
+                    <!--TODO do czego wysyłam formularz-->
+                    <div class="form-group my-2">
+                        <label for="userName">Nazwa użytkownika</label>
+                        <input name="userName" type="text" class="form-control my-2" id="userName"
+                            placeholder="Podaj nazwę użytkownika">
+                    </div>
+                    <div class="form-group my-2">
+                        <label for="userEmail">Email</label>
+                        <input name="userEmail" type="text" class="form-control my-2" id="userEmail"
+                            placeholder="Podaj adres email">
+                    </div>
+                    <div class="form-group my-2">
+                        <label for="userPassword">Hasło</label>
+                        <input name="userPassword" type="text" class="form-control my-2" id="userPassword"
+                            placeholder="Podaj hasło">
+                    </div>
+                    <div class="form-group mt-2 mb-4">
+                        <label for="userPassword2">Powtórz hasło</label>
+                        <input name="userPassword2" type="text" class="form-control mt-2 mb-0" id="userPassword2"
+                            placeholder="Powtórz swoje hasło">
+                        <small name="warrning" id="passSame" class="form-text text-danger"
+                            style="visibility:hidden; position: absolute; bottom: 16%; left: 3%;text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px darkblue"></small>
+                    </div>
+                    <input class="btn btn-primary mt-2" type="submit" id="submitButton" value="Zarejestruj"
+                        onclick="return isValid();">
+                </form>
+            </div>
+            <div class="card-footer"></div>
+        </div>
+    </div>
+
+
+
+
+    <script type="text/javascript">
+
+        function isValid() {
+            
+            //sprawdza czy puste
+            let name = document.getElementById("userName");
+            let password = document.getElementById("userPassword");
+            let password2 = document.getElementById("userPassword2");
+            let email = document.getElementById("userEmail");
+            let message = document.getElementById("passSame");
+            let elements = [name, password, password2, email];
+            let flag = false;
+
+            for (let temp of elements) {
+                if (temp.value.trim() === "") {
+                    temp.classList.add('is-invalid');
+                    flag = true;
+                } else {
+                    for (let temp of elements) {
+                        if (temp.value.trim() !== "") {
+                            try {
+                                temp.classList.remove('is-invalid');
+                            } catch { }
+                            temp.classList.add('is-valid');
+                        }
+                    }
+                }
+            }
+
+            if (flag) {
+                message.innerHTML = "Błąd logowania, pozostawiono puste pole.";
+                message.style.visibility = "visible";
+                return false;
+            }else {
+                message.style.visibility = "hidden";
+            }
+
+            //sprawdza czy hasło takie samo
+            if (password.value !== password2.value) {
+                message.innerHTML = "Błąd logowania, hasła są różne.";
+                message.style.visibility = "visible";
+                try {
+                    password2.classList.remove('is-valid');
+                } catch { }
+                password2.classList.add('is-invalid');
+                return false;
+            }
+
+            return true;
+        }
+
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+        </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+        integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</body>
+
+</html>

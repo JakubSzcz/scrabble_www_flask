@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../static/styles.css">
+    <title>Skrabble- strona główna</title>
+
+</head>
+
+<body>
+
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop0" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel0" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel0">Stwórz nową sesje i zaproś znajomych</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!--TODO tu będzie jinja generować to co chcemy -->
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget dolor in justo aliquet egestas sed
+                    quis dolor. Praesent congue mi vitae tempus tincidunt. Suspendisse potenti. Quisque at ex viverra
+                    nisi consectetur iaculis vel vel est. Phasellus vestibulum at turpis at efficitur. Vivamus sem enim,
+                    dictum vel massa nec, pretium tincidunt urna. Aliquam nibh lorem, venenatis non consectetur sit
+                    amet, iaculis quis massa.
+
+                </div>
+                <div class="modal-footer">
+                    <button id="startGameModal" type="button" class="btn btn-success">Zacznij gre!</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Zamknij</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="staticBackdrop1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel1">Dołącz do istniejącej gry</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form name="frm" action="#" method="post">
+                        <!--TODO do czego wysyłam formularz-->
+                        <div class="form-group my-2">
+                            <label for="roomName">Numer pokoju</label>
+                            <input name="roomName" type="text" class="form-control my-2" id="roomName"
+                                placeholder="Podaj numer pokoju">
+                        </div>
+                        <div class="form-group mt-2 mb-0">
+                            <label for="roomPassword">Hasło pokoju</label>
+                            <input name="roomPassword" type="password" class="form-control my-2" id="roomPassword"
+                                placeholder="Podaj hasło">
+                            <small name="warrning" id="wrongPass" class="form-text text-danger"
+                                style="visibility:hidden; position: absolute; bottom: 3%; left: 3.5%;text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px darkblue"></small>
+                        </div>
+                        <input class="btn btn-primary d-none" type="submit" id="submitButton"
+                            onclick="return isValid();">
+                        <!--TODO walidacja hasła, jak złe to komunikat-->
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <label for="submitButton" tabindex="0" class="btn btn-success" type="button" id="joinGameModal"
+                        onclick="return isValid();">Dołącz</label>
+                    <!--TODO może nie działać bo submit poza formem, naprawa to z powrotem dać to do wnetrza forma  -->
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="return resetForm();">Zamknij</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="staticBackdrop2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel2" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel2">Historia twoich rozgrywek</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Pellentesque sed nunc a mauris blandit varius. Nunc porttitor, lacus eget semper viverra, nisi felis
+                    dictum dui, ac maximus magna ligula a ipsum. Curabitur ut viverra felis. Quisque varius commodo
+                    nunc. Aliquam vehicula quis eros dapibus auctor. Suspendisse venenatis tellus vel lectus volutpat,
+                    non condimentum lorem rutrum. Duis gravida sodales diam eget commodo. Maecenas porta maximus risus,
+                    et faucibus lectus fermentum a. Donec eros sem, suscipit ut condimentum in, consectetur vitae sem.
+                    Mauris purus ante, malesuada quis porta sit amet, mollis a erat. Interdum et malesuada fames ac ante
+                    ipsum primis in faucibus.
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Zamknij</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="staticBackdrop3" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel3" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel3">Zasady gry</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!--TODO tu będzie jinja generować to co chcemy -->
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget dolor in justo aliquet egestas sed
+                    quis dolor. Praesent congue mi vitae tempus tincidunt. Suspendisse potenti. Quisque at ex viverra
+                    nisi consectetur iaculis vel vel est. Phasellus vestibulum at turpis at efficitur. Vivamus sem enim,
+                    dictum vel massa nec, pretium tincidunt urna. Aliquam nibh lorem, venenatis non consectetur sit
+                    amet, iaculis quis massa.
+
+                    Mauris ac luctus odio, vel tempus justo. Cras lorem ex, imperdiet ut mi eu, aliquam ullamcorper
+                    turpis. Aliquam pharetra eleifend turpis ac feugiat. Suspendisse ligula diam, bibendum vel
+                    pellentesque non, suscipit a sapien. Quisque et magna tellus. Aliquam non tellus ex. Proin maximus a
+                    ante sed ornare. Nunc non ultricies tellus. Mauris eu augue venenatis, mollis quam a, tristique
+                    sapien. Sed molestie urna in ex elementum facilisis. Fusce turpis lectus, molestie eget faucibus eu,
+                    tristique gravida magna.
+
+                    Pellentesque sed nunc a mauris blandit varius. Nunc porttitor, lacus eget semper viverra, nisi felis
+                    dictum dui, ac maximus magna ligula a ipsum. Curabitur ut viverra felis. Quisque varius commodo
+                    nunc. Aliquam vehicula quis eros dapibus auctor. Suspendisse venenatis tellus vel lectus volutpat,
+                    non condimentum lorem rutrum. Duis gravida sodales diam eget commodo. Maecenas porta maximus risus,
+                    et faucibus lectus fermentum a. Donec eros sem, suscipit ut condimentum in, consectetur vitae sem.
+                    Mauris purus ante, malesuada quis porta sit amet, mollis a erat. Interdum et malesuada fames ac ante
+                    ipsum primis in faucibus.
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Zamknij</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--tło-->
+    <div class='box'>
+        <div class='wave -one'></div>
+        <div class='wave -two'></div>
+        <div class='wave -three'></div>
+    </div>
+
+    <!--nagłówek-->
+    <div class="container-fluid text-center">
+        <img src="../static/logo.png">
+    </div>
+
+    <!--karta do logowania-->
+    <div class="container" style="position: relative; width: 30%; margin-top: 6%;">
+        <div class="card" style="position: absolute;
+        top: 50%;
+        width: 100%;
+        text-align: center;
+        font-size: 18px;
+        background-color: dodgerblue;
+        border-radius: 25px;">
+            <div class="card-header">
+                <h4 class="card-title mt-2">Witaj {{userName}}!</h4>
+            </div>
+            <div class="card-body">
+            </div>
+            <div class="card-body">
+                <div class="menuBtn">
+                    <button id="createGame" class="btn btn-primary" style="width: 70%;" data-bs-toggle="modal"
+                        data-bs-target="#staticBackdrop0">Stwórz nową grę</button>
+                </div>
+                <div class="menuBtn">
+                    <button id="joinGame" class="btn btn-primary" style="width: 70%;" data-bs-toggle="modal"
+                        data-bs-target="#staticBackdrop1">Dołącz do gry</button>
+                </div>
+                <div class="menuBtn">
+                    <button id="history" class="btn btn-primary" style="width: 70%;" data-bs-toggle="modal"
+                        data-bs-target="#staticBackdrop2">Pokaż historie gier</button>
+                </div>
+                <div class="menuBtn">
+                    <button id="howToPlay" class="btn btn-primary mb-2" data-bs-toggle="modal"
+                        data-bs-target="#staticBackdrop3" style="width: 70%;">Jak grać</button>
+                </div>
+
+            </div>
+            <div class="card-footer">
+                <div class="btn fw-bold text-dark">Wyloguj</div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        function isValid() {
+
+            let name = document.getElementById("roomName");
+            let password = document.getElementById("roomPassword");
+            let message = document.getElementById("wrongPass");
+            let elements = [name, password];
+            let flag = false;
+
+            for (let temp of elements) {
+                if (temp.value.trim() === "") {
+                    temp.classList.add('is-invalid');
+                    flag = true;
+                } else {
+                    for (let temp of elements) {
+                        if (temp.value.trim() !== "") {
+                            try {
+                                temp.classList.remove('is-invalid');
+                            } catch { }
+                            temp.classList.add('is-valid');
+                        }
+                    }
+                }
+            }
+
+            if (flag) {
+                message.innerHTML = "Błąd dołączania, pozostawiono puste pole.";
+                message.style.visibility = "visible";
+                return false;
+            }
+
+            return true;
+        }
+
+        function resetForm() {
+
+            let name = document.getElementById("roomName");
+            let password = document.getElementById("roomPassword");
+            let message = document.getElementById("wrongPass");
+            let elements = [name, password];
+
+            for (let temp of elements) {
+                try {
+                    temp.classList.remove('is-invalid');
+                    temp.classList.remove('is-valid');
+                } catch { }
+            }
+            message.style.visibility = "hidden";
+
+            return true;
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+</body>
+
+
+</html>
