@@ -56,7 +56,7 @@
             border-radius: 25px;">
                 <div class="card-header">
                     <h5 style="display: inline-block;">Twoje litery: </h5>
-                    <div class=" ms-3 btn btn-info" style="display: inline-block;" id="wymienLitereBtn">Wymień literę
+                    <div class=" ms-3 btn btn-info" style="display: inline-block;" id="wymienLitereBtn" onclick="return wymienLitere();">Wymień literę
                     </div>
                     <div class=" ms-3 btn btn-success" style="display: inline-block;" id="potwierdzRuchBtn">Potwierdź
                         ruch</div>
@@ -70,6 +70,9 @@
                     <div class="container" id="rekaDiv">
 
                         <script type="text/javascript">
+                            var czyMogeKopiowac = false;
+                            var czyWymiana = false;
+                            var literaDoKopiowania = "";
                             let planszaReka = document.getElementById("rekaDiv");
                             for (let i = 0; i < 2; i++) {
                                 let wierszReka = document.createElement("div");
@@ -80,15 +83,40 @@
                                     literaKontenerReka.setAttribute('class', "col-sm");
                                     let literaBtnReka = document.createElement("div");
                                     literaBtnReka.setAttribute('class', "btn btn-primary mojaLiteraReka");
+                                    literaBtnReka.setAttribute('id', ('literaBtnReka' + i.toString() + j.toString()));
                                     let literaReka = document.createElement("h1");
                                     literaReka.setAttribute('id', ('literaReka' + i.toString() + j.toString()));
-                                    literaReka.innerHTML = "X";
+                                    literaReka.innerHTML = losujLitere();
+                                    //TODO- wstawia mi wartość literki zamiast X
                                     literaBtnReka.appendChild(literaReka);
+                                    literaBtnReka.setAttribute('onclick', "return kopiujWartosc(this);");
                                     literaKontenerReka.appendChild(literaBtnReka);
                                     wierszReka.append(literaKontenerReka);
                                 }
                                 planszaReka.append(wierszReka);
                             }
+                            function kopiujWartosc(przycisk) {
+                                if (!czyWymiana) {
+                                    czyMogeKopiowac = true;
+                                    literaDoKopiowania = przycisk.childNodes[0].innerHTML;
+                                }else{
+                                    czyWymiana = false;
+                                    przycisk.childNodes[0].innerHTML = losujLitere();
+                                }
+                            }
+
+                            function losujLitere() {
+                                const litery = ["A", "A", "A", "A", "A", "A", "A", "A", "Ą", "B", "C", "C", "C", "C", "Ć", "D", "D", "D", "E", "E", "E", "E", "E", "E", "E",
+                                    "E", "Ę", "F", "G", "H", "I", "I", "I", "I", "I", "I", "I", "I", "J", "J", "K", "K", "K", "K", "L", "L", "Ł", "Ł", "M", "M", "M",
+                                    "N", "N", "N", "N", "N", "Ń", "O", "O", "O", "O", "O", "O", "O", "O", "Ó", "P", "P", "P", "Q", "R", "R", "R", "R", "R", "S", "S", "S",
+                                    "S", "Ś", "T", "T", "T", "T", "U", "U", "U", "W", "W", "W", "W", "W", "Y", "Y", "Y", "Y", "Z", "Z", "Z", "Z", "Z", "Z", "Z", "Ź", "Ż"];
+                                return litery[Math.floor(Math.random() * litery.length)];
+                            }
+
+                            function wymienLitere(){
+                                czyWymiana = true;
+                            }
+
                         </script>
 
 
@@ -119,11 +147,23 @@
                                 let litera = document.createElement("h1");
                                 litera.setAttribute('id', ('litera' + i.toString() + j.toString()));
                                 literaBtn.appendChild(litera);
+                                literaBtn.setAttribute('onclick', "return skopiujWartosc(this);");
                                 literaKontener.appendChild(literaBtn);
                                 wiersz.append(literaKontener);
                             }
                             plansza.append(wiersz);
                         }
+
+                        function skopiujWartosc(przycisk1) {
+                            if (czyMogeKopiowac == true) {
+                                czyMogeKopiowac = false;
+                                przycisk1.childNodes[0].innerHTML = literaDoKopiowania;
+                                przycisk1.classList.add("active")
+                            } else {
+                                alert("Najpierw zaznacz litere")
+                            }
+                        }
+
                     </script>
                 </div>
             </div>
@@ -145,8 +185,6 @@
             var distance = countDownDate - now;
 
             // Time calculations for days, hours, minutes and seconds
-            var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
