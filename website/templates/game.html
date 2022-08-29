@@ -63,7 +63,7 @@
                     </div>
                     <div class=" ms-3 btn btn-success" style="display: inline-block;" id="potwierdzRuchBtn">Potwierdź
                         ruch</div>
-                        <!--TODO po potwierdzenieu ruchu wyzeruj historie ruchow!-->
+                    <!--TODO po potwierdzenieu ruchu wyzeruj historie ruchow!-->
                     <div class=" ms-3 btn btn-danger" style="display: inline-block;" id="pominTureBtn">Pomiń turę</div>
                 </div>
                 <div class="card-body">
@@ -143,14 +143,14 @@
                                 }
                             }
 
-                            function cofnijRuch(){
-                                if(historiaRuchow.length > 0){
+                            function cofnijRuch() {
+                                if (historiaRuchow.length > 0) {
                                     let temp = document.getElementById(historiaRuchow.pop());
                                     temp.classList.remove("active");
                                     temp.childNodes[0].innerHTML = "";
                                     temp = document.getElementById(historiaRuchowReka.pop());
                                     temp.classList.remove("disabled");
-                                }else{
+                                } else {
                                     alert("Nie można cofnąć ruchu.")
                                 }
                             }
@@ -193,6 +193,46 @@
                             plansza.append(wiersz);
                         }
 
+                        //kolory specjalne:
+                        //przekątne
+                        for (let i = 0; i < 11; i++) {
+                            if (i !== 5) {
+                                document.getElementById("literaBtn" + i.toString() + i.toString()).classList.remove("btn-normal");
+                                document.getElementById("literaBtn" + i.toString() + (10 - i).toString()).classList.remove("btn-normal");
+
+                                if (i === 1 || i === 9 ) {
+                                    document.getElementById("literaBtn" + i.toString() + i.toString()).classList.add("btn-slowo2");
+                                    document.getElementById("literaBtn" + i.toString() + (10 - i).toString()).classList.add("btn-slowo2");
+                                } else if (i % 2 == 0) {
+                                    document.getElementById("literaBtn" + i.toString() + i.toString()).classList.add("btn-litera2");
+                                    document.getElementById("literaBtn" + i.toString() + (10 - i).toString()).classList.add("btn-litera2");
+                                }
+                                else {
+                                    document.getElementById("literaBtn" + i.toString() + i.toString()).classList.add("btn-litera3");
+                                    document.getElementById("literaBtn" + i.toString() + (10 - i).toString()).classList.add("btn-litera3");
+                                }
+                            }
+                        }
+                        //start:
+                        document.getElementById("literaBtn55").classList.remove("btn-normal");
+                        document.getElementById("literaBtn55").classList.remove("btn-litera2");
+                        document.getElementById("literaBtn55").classList.add("btn-start")
+                        //trojkaty boczne
+                        for(let i = 0; i<=10; i=i+10){
+                            document.getElementById("literaBtn" + (i).toString() + "5").classList.add("btn-litera3");
+                        }
+                        for(let i = 4; i<=6; i=i+2){
+                            document.getElementById("literaBtn" + "1" + (i).toString()).classList.add("btn-litera2");
+                            document.getElementById("literaBtn" + "9" + (i).toString()).classList.add("btn-litera2");
+                        }
+                        for(let i = 0; i<=10; i=i+10){
+                            document.getElementById("literaBtn" + "5" + (i).toString()).classList.add("btn-slowo2");
+                        }
+                        for(let i = 4; i<=6; i=i+2){
+                            document.getElementById("literaBtn" + (i).toString() + "1").classList.add("btn-litera2");
+                            document.getElementById("literaBtn" + (i).toString() + "9").classList.add("btn-litera2");
+                        }
+
                         function skopiujWartosc(przycisk1) {
                             if (czyMogeKopiowac === true) {
                                 if (!przycisk1.classList.contains("active")) {
@@ -206,7 +246,7 @@
                                     document.getElementById("pominTureBtn").classList.remove("disabled");
                                     document.getElementById(historiaRuchowReka[historiaRuchowReka.length - 1]).classList.add("btn-primary");
                                     document.getElementById(historiaRuchowReka[historiaRuchowReka.length - 1]).classList.remove("btn-success");
-                                }else{
+                                } else {
                                     alert("Pole jest już zajęte!")
                                 }
                             } else {
