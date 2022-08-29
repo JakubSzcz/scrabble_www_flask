@@ -1,10 +1,11 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from os import path
 from flask_login import LoginManager
 
 db = SQLAlchemy()
 DB_NAME = "database.db"
+
 
 def create_app():
     app = Flask(__name__)
@@ -30,8 +31,13 @@ def create_app():
     def load_user(id):
         return User.query.get(int(id))
 
+    #obsługa błędu 404
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return render_template('404.html'), 404
 
     return app
+
 
 def create_database(app):
     if not path.exists('website/' + DB_NAME):
