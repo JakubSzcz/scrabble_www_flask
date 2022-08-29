@@ -55,7 +55,7 @@
             background-color: dodgerblue;
             border-radius: 25px;">
                 <div class="card-header">
-                    <div class=" ms-3 btn btn-dark" style="display: inline-block;" id="cofnijRuch"
+                    <div class=" ms-3 btn btn-dark" style="display: inline-block;" id="cofnijRuchBtn"
                         onclick="return cofnijRuch();">Cofnij ruch
                     </div>
                     <div class=" ms-3 btn btn-info" style="display: inline-block;" id="wymienLitereBtn"
@@ -63,11 +63,8 @@
                     </div>
                     <div class=" ms-3 btn btn-success" style="display: inline-block;" id="potwierdzRuchBtn">Potwierdź
                         ruch</div>
+                        <!--TODO po potwierdzenieu ruchu wyzeruj historie ruchow!-->
                     <div class=" ms-3 btn btn-danger" style="display: inline-block;" id="pominTureBtn">Pomiń turę</div>
-                    <div class=" ms-3" style="display: inline-block;">
-                        <p id="countdown"></p>
-                    </div>
-
                 </div>
                 <div class="card-body">
                     <div class="container" id="rekaDiv">
@@ -78,6 +75,7 @@
                             var czyWymiana = false;
                             var literaDoKopiowania = "";
                             let planszaReka = document.getElementById("rekaDiv");
+                            var historiaRuchowReka = [];
                             for (let i = 0; i < 2; i++) {
                                 let wierszReka = document.createElement("div");
                                 wierszReka.setAttribute('class', "row align-items-start mb-2 g-2");
@@ -102,9 +100,18 @@
                                 if (!czyWymiana) {
                                     czyMogeKopiowac = true;
                                     literaDoKopiowania = przycisk.childNodes[0].innerHTML;
+                                    przycisk.classList.add("disabled");
+                                    historiaRuchowReka.push(przycisk.id);
+                                    document.getElementById("cofnijRuchBtn").classList.add("disabled");
+                                    document.getElementById("wymienLitereBtn").classList.add("disabled");
+                                    document.getElementById("potwierdzRuchBtn").classList.add("disabled");
+                                    document.getElementById("pominTureBtn").classList.add("disabled");
                                 } else {
                                     czyWymiana = false;
                                     przycisk.childNodes[0].innerHTML = losujLitere();
+                                    document.getElementById("cofnijRuchBtn").classList.remove("disabled");
+                                    document.getElementById("potwierdzRuchBtn").classList.remove("disabled");
+                                    document.getElementById("pominTureBtn").classList.remove("disabled");
                                 }
                             }
 
@@ -120,8 +127,14 @@
                                 if (czyWymiana === false) {
                                     czyWymiana = true;
                                     czyMogeKopiowac = false;
+                                    document.getElementById("cofnijRuchBtn").classList.add("disabled");
+                                    document.getElementById("potwierdzRuchBtn").classList.add("disabled");
+                                    document.getElementById("pominTureBtn").classList.add("disabled");
                                 } else {
                                     czyWymiana = false;
+                                    document.getElementById("cofnijRuchBtn").classList.remove("disabled");
+                                    document.getElementById("potwierdzRuchBtn").classList.remove("disabled");
+                                    document.getElementById("pominTureBtn").classList.remove("disabled");
                                 }
                             }
 
@@ -130,6 +143,8 @@
                                     let temp = document.getElementById(historiaRuchow.pop());
                                     temp.classList.remove("active");
                                     temp.childNodes[0].innerHTML = "";
+                                    temp = document.getElementById(historiaRuchowReka.pop());
+                                    temp.classList.remove("disabled");
                                 }else{
                                     alert("Nie można cofnąć ruchu.")
                                 }
@@ -180,6 +195,10 @@
                                     przycisk1.childNodes[0].innerHTML = literaDoKopiowania;
                                     przycisk1.classList.add("active");
                                     historiaRuchow.push(przycisk1.id);
+                                    document.getElementById("cofnijRuchBtn").classList.remove("disabled");
+                                    document.getElementById("wymienLitereBtn").classList.remove("disabled");
+                                    document.getElementById("potwierdzRuchBtn").classList.remove("disabled");
+                                    document.getElementById("pominTureBtn").classList.remove("disabled");
                                 }else{
                                     alert("Pole jest już zajęte!")
                                 }
@@ -194,35 +213,6 @@
         </div>
     </div>
 
-
-    <script>
-        // Set the date we're counting down to
-        var countDownDate = new Date().getTime() + 3 * 60000;
-
-        // Update the count down every 1 second
-        var x = setInterval(function () {
-
-            // Get today's date and time
-            var now = new Date().getTime();
-
-            // Find the distance between now and the count down date
-            var distance = countDownDate - now;
-
-            // Time calculations for days, hours, minutes and seconds
-            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-            // Display the result in the element with id="demo"
-            document.getElementById("countdown").innerHTML =
-                minutes + "m " + seconds + "s ";
-
-            // If the count down is finished, write some text
-            if (distance < 0) {
-                clearInterval(x);
-                document.getElementById("countdown").innerHTML = "Czas minął!";
-            }
-        }, 1000);
-    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
