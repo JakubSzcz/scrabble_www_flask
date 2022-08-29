@@ -45,7 +45,7 @@
             </div>
         </div>
 
-        <!--div z literam-->
+        <!--div z reka-->
         <div style="position: absolute; width: 40%; left: 1%; top:56%" id="divLitery">
             <div class="card" style="position: absolute;
             top: 50%;
@@ -55,64 +55,43 @@
             background-color: dodgerblue;
             border-radius: 25px;">
                 <div class="card-header">
-                    <h5 style="display: inline-block;">Twoje litery</h5>
+                    <h5 style="display: inline-block;">Twoje litery: </h5>
                     <div class=" ms-3 btn btn-info" style="display: inline-block;" id="wymienLitereBtn">Wymień literę
                     </div>
                     <div class=" ms-3 btn btn-success" style="display: inline-block;" id="potwierdzRuchBtn">Potwierdź
                         ruch</div>
-                    <div class=" ms-3 btn btn-danger" style="display: inline-block;" id="pominTureeBtn">Pomiń turę</div>
+                    <div class=" ms-3 btn btn-danger" style="display: inline-block;" id="pominTureBtn">Pomiń turę</div>
                     <div class=" ms-3" style="display: inline-block;">
                         <p id="countdown"></p>
                     </div>
 
                 </div>
                 <div class="card-body">
-                    <div class="container">
-                        
-                        <div class="row align-items-start mb-2 g-2">
-                            <div class="col-sm">
-                                <div class="btn btn-primary mojaLiteraReka">
-                                    <h1 id="mojaLitera0">A</h1>
-                                </div>
-                            </div>
-                            <div class="col-sm">
-                                <div class="btn btn-primary mojaLiteraReka">
-                                    <h1 id="mojaLitera1">B</h1>
-                                </div>
-                            </div>
-                            <div class="col-sm">
-                                <div class="btn btn-primary mojaLiteraReka">
-                                    <h1 id="mojaLitera2">C</h1>
-                                </div>
-                            </div>
-                            <div class="col-sm">
-                                <div class="btn btn-primary mojaLiteraReka">
-                                    <h1 id="mojaLitera3">D</h1>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row align-items-end my-2 g-2">
-                            <div class="col-sm">
-                                <div class="btn btn-primary mojaLiteraReka">
-                                    <h1 id="mojaLitera4">E</h1>
-                                </div>
-                            </div>
-                            <div class="col-sm">
-                                <div class="btn btn-primary mojaLiteraReka">
-                                    <h1 id="mojaLitera5">F</h1>
-                                </div>
-                            </div>
-                            <div class="col-sm">
-                                <div class="btn btn-primary mojaLiteraReka">
-                                    <h1 id="mojaLitera6">G</h1>
-                                </div>
-                            </div>
-                            <div class="col-sm">
-                                <div class="btn btn-primary mojaLiteraReka">
-                                    <h1 id="mojaLitera7">H</h1>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="container" id="rekaDiv">
+
+                        <script type="text/javascript">
+                            let planszaReka = document.getElementById("rekaDiv");
+                            for (let i = 0; i < 2; i++) {
+                                let wierszReka = document.createElement("div");
+                                wierszReka.setAttribute('class', "row align-items-start mb-2 g-2");
+                                wierszReka.setAttribute('id', ('wierszReka' + i.toString()));
+                                for (let j = 0; j < 4; j++) {
+                                    let literaKontenerReka = document.createElement("div");
+                                    literaKontenerReka.setAttribute('class', "col-sm");
+                                    let literaBtnReka = document.createElement("div");
+                                    literaBtnReka.setAttribute('class', "btn btn-primary mojaLiteraReka");
+                                    let literaReka = document.createElement("h1");
+                                    literaReka.setAttribute('id', ('literaReka' + i.toString() + j.toString()));
+                                    literaReka.innerHTML = "X";
+                                    literaBtnReka.appendChild(literaReka);
+                                    literaKontenerReka.appendChild(literaBtnReka);
+                                    wierszReka.append(literaKontenerReka);
+                                }
+                                planszaReka.append(wierszReka);
+                            }
+                        </script>
+
+
                     </div>
                 </div>
                 <div class="card-footer"></div>
@@ -130,15 +109,15 @@
                         let plansza = document.getElementById("planszaDiv");
                         for (let i = 0; i < 11; i++) {
                             let wiersz = document.createElement("div");
-                            wiersz.setAttribute('class',"row align-items-start mb-2 g-2");
-                            wiersz.setAttribute('id',('wiersz'+ i.toString()));
-                            for(let j = 0; j<11; j++){
+                            wiersz.setAttribute('class', "row align-items-start mb-2 g-2");
+                            wiersz.setAttribute('id', ('wiersz' + i.toString()));
+                            for (let j = 0; j < 11; j++) {
                                 let literaKontener = document.createElement("div");
-                                literaKontener.setAttribute('class',"col-sm");
+                                literaKontener.setAttribute('class', "col-sm");
                                 let literaBtn = document.createElement("div");
-                                literaBtn.setAttribute('class',"btn btn-normal mojaLitera");
+                                literaBtn.setAttribute('class', "btn btn-normal mojaLitera");
                                 let litera = document.createElement("h1");
-                                litera.setAttribute('id',('litera'+ i.toString() + j.toString()));
+                                litera.setAttribute('id', ('litera' + i.toString() + j.toString()));
                                 literaBtn.appendChild(litera);
                                 literaKontener.appendChild(literaBtn);
                                 wiersz.append(literaKontener);
