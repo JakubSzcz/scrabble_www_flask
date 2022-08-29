@@ -101,6 +101,8 @@
                                     czyMogeKopiowac = true;
                                     literaDoKopiowania = przycisk.childNodes[0].innerHTML;
                                     przycisk.classList.add("disabled");
+                                    przycisk.classList.remove("btn-primary");
+                                    przycisk.classList.add("btn-success");
                                     historiaRuchowReka.push(przycisk.id);
                                     document.getElementById("cofnijRuchBtn").classList.add("disabled");
                                     document.getElementById("wymienLitereBtn").classList.add("disabled");
@@ -112,6 +114,7 @@
                                     document.getElementById("cofnijRuchBtn").classList.remove("disabled");
                                     document.getElementById("potwierdzRuchBtn").classList.remove("disabled");
                                     document.getElementById("pominTureBtn").classList.remove("disabled");
+                                    document.getElementById("wymienLitereBtn").innerHTML = "Wymień literę";
                                 }
                             }
 
@@ -130,11 +133,13 @@
                                     document.getElementById("cofnijRuchBtn").classList.add("disabled");
                                     document.getElementById("potwierdzRuchBtn").classList.add("disabled");
                                     document.getElementById("pominTureBtn").classList.add("disabled");
+                                    document.getElementById("wymienLitereBtn").innerHTML = "Anuluj";
                                 } else {
                                     czyWymiana = false;
                                     document.getElementById("cofnijRuchBtn").classList.remove("disabled");
                                     document.getElementById("potwierdzRuchBtn").classList.remove("disabled");
                                     document.getElementById("pominTureBtn").classList.remove("disabled");
+                                    document.getElementById("wymienLitereBtn").innerHTML = "Wymień literę";
                                 }
                             }
 
@@ -199,6 +204,8 @@
                                     document.getElementById("wymienLitereBtn").classList.remove("disabled");
                                     document.getElementById("potwierdzRuchBtn").classList.remove("disabled");
                                     document.getElementById("pominTureBtn").classList.remove("disabled");
+                                    document.getElementById(historiaRuchowReka[historiaRuchowReka.length - 1]).classList.add("btn-primary");
+                                    document.getElementById(historiaRuchowReka[historiaRuchowReka.length - 1]).classList.remove("btn-success");
                                 }else{
                                     alert("Pole jest już zajęte!")
                                 }
