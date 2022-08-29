@@ -56,7 +56,8 @@
             border-radius: 25px;">
                 <div class="card-header">
                     <h5 style="display: inline-block;">Twoje litery: </h5>
-                    <div class=" ms-3 btn btn-info" style="display: inline-block;" id="wymienLitereBtn" onclick="return wymienLitere();">Wymień literę
+                    <div class=" ms-3 btn btn-info" style="display: inline-block;" id="wymienLitereBtn"
+                        onclick="return wymienLitere();">Wymień literę
                     </div>
                     <div class=" ms-3 btn btn-success" style="display: inline-block;" id="potwierdzRuchBtn">Potwierdź
                         ruch</div>
@@ -99,7 +100,7 @@
                                 if (!czyWymiana) {
                                     czyMogeKopiowac = true;
                                     literaDoKopiowania = przycisk.childNodes[0].innerHTML;
-                                }else{
+                                } else {
                                     czyWymiana = false;
                                     przycisk.childNodes[0].innerHTML = losujLitere();
                                 }
@@ -113,8 +114,12 @@
                                 return litery[Math.floor(Math.random() * litery.length)];
                             }
 
-                            function wymienLitere(){
-                                czyWymiana = true;
+                            function wymienLitere() {
+                                if (czyWymiana == false) {
+                                    czyWymiana = true;
+                                }else{
+                                    czyWymiana = false;
+                                }
                             }
 
                         </script>
