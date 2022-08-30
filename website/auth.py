@@ -30,9 +30,9 @@ def login():
 @auth.route('/new_account', methods = ['GET', 'POST'])
 def new_account():
     if request.method == 'POST':
-        email = request.form.get('email')
-        first_name = request.form.get('firstName')
-        password = request.form.get('password')
+        email = request.form.get('userEmail')
+        first_name = request.form.get('userName')
+        password = request.form.get('userPassword')
 
         user = User.query.filter_by(email=email).first()
         if user:
