@@ -1,4 +1,3 @@
-
 // zmienna
 var historiaRuchow = []; // tablica wsporzednych wybranych przyciskow z planszy
 var czyMogeKopiowac = false; // flaga czy moge przenieść litere z reki na tablice

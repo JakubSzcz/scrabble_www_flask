@@ -38,7 +38,7 @@
                 <h4 class="card-title">Zaloguj sie</h4>
             </div>
             <div class="card-body">
-                <form name="frm" action="/" method="post">
+                <form name="frm" action="{{ url_for('auth.login') }}" method="post">
                     <!--TODO do czego wysyłam formularz-->
                     <div class="form-group my-2">
                         <label for="userName">Nazwa użytkownika</label>
