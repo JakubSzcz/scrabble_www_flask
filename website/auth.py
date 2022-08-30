@@ -51,6 +51,5 @@ def new_account():
 @auth.route('/logout',  methods = ['POST', 'GET'])
 @login_required
 def logout():
-    print("siema")
     logout_user()
     return redirect('/')
