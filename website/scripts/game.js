@@ -1,11 +1,13 @@
 // zmienna
-var historiaRuchow = []; // tablica wsporzednych wybranych przyciskow z planszy
-var czyMogeKopiowac = false; // flaga czy moge przenieść litere z reki na tablice
-var czyWymiana = false; // flaga czy aktualnie moge przeprowadzic wymiane, np. czy nie wybrałem wczesniej litery z reki
-var literaDoKopiowania = ""; //wartosc litery do skopiowania z reki do planszy
-let planszaReka = document.getElementById("rekaDiv"); //div z literami w rece
-var historiaRuchowReka = []; //tablica wsporzednych wybranych przyciskow z reki
-var plansza = document.getElementById("planszaDiv"); // div z plansza do gry na litery
+var historiaRuchow = []; // tablica wsporzednych wybranych przyciskow z planszy- STRING
+var czyMogeKopiowac = false; // flaga czy moge przenieść litere z reki na tablice -bool
+var czyWymiana = false; // flaga czy aktualnie moge przeprowadzic wymiane, np. czy nie wybrałem wczesniej litery z reki- bool
+var literaDoKopiowania = ""; //wartosc litery do skopiowania z reki do planszy- STRING
+let planszaReka = document.getElementById("rekaDiv"); //div z literami w rece- obiekt div
+var historiaRuchowReka = []; //tablica wsporzednych wybranych przyciskow z reki- STRING
+var plansza = document.getElementById("planszaDiv"); // div z plansza do gry na litery- obiekt div
+var czyMogePotwierdzic = true;
+var czyMogeWybracLitere = true; //czy moge znow kliknac na litere na rece
 
 
 // tworzenie DOM
@@ -19,7 +21,7 @@ for (let i = 0; i < 2; i++) {
         literaKontenerReka.setAttribute('class', "col-sm");
         let literaBtnReka = document.createElement("div"); //przycisk
         literaBtnReka.setAttribute('class', "btn btn-primary mojaLiteraReka");
-        literaBtnReka.setAttribute('id', ('literaBtnReka' + i.toString() + j.toString())); //id przycisku w rece: literaBtnRekaXY
+        literaBtnReka.setAttribute('id', ('literaBtnReka' + i.toString() + "," + j.toString())); //id przycisku w rece: literaBtnRekaX,Y
         let literaReka = document.createElement("h1");
         literaReka.setAttribute('id', ('literaReka' + i.toString() + j.toString())); //id litery na przycisku w rece: literaRekaXY
         literaReka.innerHTML = losujLitere(); //losuje poczatkowo litere
@@ -41,7 +43,7 @@ for (let i = 0; i < 11; i++) {
         literaKontener.setAttribute('class', "col-sm");
         let literaBtn = document.createElement("div"); //przycisk z litera
         literaBtn.setAttribute('class', "btn btn-normal mojaLitera");
-        literaBtn.setAttribute('id', ('literaBtn' + i.toString() + j.toString())); //id przycisku: literaBtnXY
+        literaBtn.setAttribute('id', ('literaBtn' + i.toString() + "," + j.toString())); //id przycisku: literaBtnX,Y
         let litera = document.createElement("h1"); // litera w przycisku
         litera.setAttribute('id', ('litera' + i.toString() + j.toString())); //id litery: literaXY
         literaBtn.appendChild(litera);
@@ -56,39 +58,39 @@ for (let i = 0; i < 11; i++) {
 //przekątne
 for (let i = 0; i < 11; i++) {
     if (i !== 5) {
-        document.getElementById("literaBtn" + i.toString() + i.toString()).classList.remove("btn-normal");
-        document.getElementById("literaBtn" + i.toString() + (10 - i).toString()).classList.remove("btn-normal");
+        document.getElementById("literaBtn" + i.toString() + "," + i.toString()).classList.remove("btn-normal");
+        document.getElementById("literaBtn" + i.toString() + "," + (10 - i).toString()).classList.remove("btn-normal");
 
         if (i === 1 || i === 9) {
-            document.getElementById("literaBtn" + i.toString() + i.toString()).classList.add("btn-slowo2");
-            document.getElementById("literaBtn" + i.toString() + (10 - i).toString()).classList.add("btn-slowo2");
+            document.getElementById("literaBtn" + i.toString() + "," + i.toString()).classList.add("btn-slowo2");
+            document.getElementById("literaBtn" + i.toString() + "," + (10 - i).toString()).classList.add("btn-slowo2");
         } else if (i % 2 == 0) {
-            document.getElementById("literaBtn" + i.toString() + i.toString()).classList.add("btn-litera2");
-            document.getElementById("literaBtn" + i.toString() + (10 - i).toString()).classList.add("btn-litera2");
+            document.getElementById("literaBtn" + i.toString() + "," + i.toString()).classList.add("btn-litera2");
+            document.getElementById("literaBtn" + i.toString() + "," + (10 - i).toString()).classList.add("btn-litera2");
         }
         else {
-            document.getElementById("literaBtn" + i.toString() + i.toString()).classList.add("btn-litera3");
-            document.getElementById("literaBtn" + i.toString() + (10 - i).toString()).classList.add("btn-litera3");
+            document.getElementById("literaBtn" + i.toString() + "," + i.toString()).classList.add("btn-litera3");
+            document.getElementById("literaBtn" + i.toString() + "," + (10 - i).toString()).classList.add("btn-litera3");
         }
     }
 }
 //pole startu
-document.getElementById("literaBtn55").classList.remove("btn-normal");
-document.getElementById("literaBtn55").classList.add("btn-start")
+document.getElementById("literaBtn5,5").classList.remove("btn-normal");
+document.getElementById("literaBtn5,5").classList.add("btn-start")
 //trojkaty po bokach
 for (let i = 0; i <= 10; i = i + 10) {
-    document.getElementById("literaBtn" + (i).toString() + "5").classList.add("btn-litera3");
+    document.getElementById("literaBtn" + (i).toString() + "," + "5").classList.add("btn-litera3");
 }
 for (let i = 4; i <= 6; i = i + 2) {
-    document.getElementById("literaBtn" + "1" + (i).toString()).classList.add("btn-litera2");
-    document.getElementById("literaBtn" + "9" + (i).toString()).classList.add("btn-litera2");
+    document.getElementById("literaBtn" + "1" + "," + (i).toString()).classList.add("btn-litera2");
+    document.getElementById("literaBtn" + "9" + "," + (i).toString()).classList.add("btn-litera2");
 }
 for (let i = 0; i <= 10; i = i + 10) {
-    document.getElementById("literaBtn" + "5" + (i).toString()).classList.add("btn-slowo2");
+    document.getElementById("literaBtn" + "5" + "," + (i).toString()).classList.add("btn-slowo2");
 }
 for (let i = 4; i <= 6; i = i + 2) {
-    document.getElementById("literaBtn" + (i).toString() + "1").classList.add("btn-litera2");
-    document.getElementById("literaBtn" + (i).toString() + "9").classList.add("btn-litera2");
+    document.getElementById("literaBtn" + (i).toString() + "," + "1").classList.add("btn-litera2");
+    document.getElementById("literaBtn" + (i).toString() + "," + "9").classList.add("btn-litera2");
 }
 
 
@@ -97,16 +99,19 @@ for (let i = 4; i <= 6; i = i + 2) {
 //kopiuje wartosc nacisnietej litery z reki, wartosc zapisywana w zmiennej literaDoKopiowania
 function kopiujWartosc(przycisk) {
     if (!czyWymiana) { //jesli nie nacisnal przycisku wymien
-        czyMogeKopiowac = true; //flaga odblokowywujaca ustawianie wartosci na planszy
-        literaDoKopiowania = przycisk.childNodes[0].innerHTML;
-        przycisk.classList.add("disabled"); // po wybraniu przycisku zamieniam go na disabled i zmieniam kolor na zielony
-        przycisk.classList.remove("btn-primary");
-        przycisk.classList.add("btn-success");
-        historiaRuchowReka.push(przycisk.id); //dodaje do historii wybranych liter w rece
-        document.getElementById("cofnijRuchBtn").classList.add("disabled"); //podczas ruchu nie mozna uzyc innych przyciskow
-        document.getElementById("wymienLitereBtn").classList.add("disabled");
-        document.getElementById("potwierdzRuchBtn").classList.add("disabled");
-        document.getElementById("pominTureBtn").classList.add("disabled");
+        if (czyMogeWybracLitere) {
+            czyMogeWybracLitere = false;
+            czyMogeKopiowac = true; //flaga odblokowywujaca ustawianie wartosci na planszy
+            literaDoKopiowania = przycisk.childNodes[0].innerHTML;
+            przycisk.classList.add("disabled"); // po wybraniu przycisku zamieniam go na disabled i zmieniam kolor na zielony
+            przycisk.classList.remove("btn-primary");
+            przycisk.classList.add("btn-success");
+            historiaRuchowReka.push(przycisk.id); //dodaje do historii wybranych liter w rece
+            document.getElementById("cofnijRuchBtn").classList.add("disabled"); //podczas ruchu nie mozna uzyc innych przyciskow
+            document.getElementById("wymienLitereBtn").classList.add("disabled");
+            document.getElementById("potwierdzRuchBtn").classList.add("disabled");
+            document.getElementById("pominTureBtn").classList.add("disabled");
+        }
     } else { //jesli gracz nacisnal wymien
         czyWymiana = false;
         przycisk.childNodes[0].innerHTML = losujLitere(); //wymieniam
@@ -131,6 +136,7 @@ function skopiujWartosc(przycisk1) {
             document.getElementById("pominTureBtn").classList.remove("disabled");
             document.getElementById(historiaRuchowReka[historiaRuchowReka.length - 1]).classList.add("btn-primary");//powrot wybranej litery do wczesniejszego koloru
             document.getElementById(historiaRuchowReka[historiaRuchowReka.length - 1]).classList.remove("btn-success");
+            czyMogeWybracLitere = true;
         } else {//pole jest zajete
             alert("Pole jest już zajęte!")
         }
@@ -144,7 +150,7 @@ function losujLitere() {
     const litery = ["A", "A", "A", "A", "A", "A", "A", "A", "Ą", "B", "C", "C", "C", "C", "Ć", "D", "D", "D", "E", "E", "E", "E", "E", "E", "E",
         "E", "Ę", "F", "G", "H", "I", "I", "I", "I", "I", "I", "I", "I", "J", "J", "K", "K", "K", "K", "L", "L", "Ł", "Ł", "M", "M", "M",
         "N", "N", "N", "N", "N", "Ń", "O", "O", "O", "O", "O", "O", "O", "O", "Ó", "P", "P", "P", "R", "R", "R", "R", "R", "S", "S", "S",
-        "S", "Ś", "T", "T", "T", "T", "U", "U", "U", "W", "W", "W", "W", "W", "Y", "Y", "Y", "Y", "Z", "Z", "Z", "Z", "Z", "Z", "Z", "Ź", "Ż"];
+        "S", "Ś", "T", "T", "T", "T", "U", "U", "U", "W", "W", "W", "W", "W", "Y", "Y", "Y", "Y", "Z", "Z", "Z", "Z", "Z", "Z", "Ź", "Ż"];
     return litery[Math.floor(Math.random() * litery.length)];
 }
 
@@ -178,4 +184,49 @@ function cofnijRuch() {
     } else {//nie wykonano zadnych ruchow
         alert("Nie można cofnąć ruchu.")
     }
+}
+
+//funkcj odpala sie po naciśnieciu przycisku potwierdz ruch, usuwa historie ruchow, losuje nowe litery i włącza je znów do użycia
+//TODO-- ajaxem wysyłam słowo do serwera
+function potwierdzRuch() {
+
+    if (historiaRuchow.length === 0) {//sprawdza czy wykonano jakikolwiek ruch
+        czyMogePotwierdzic = false;
+    }
+
+
+    //tu funkcja ktora sprawdz na serwerze czy wpisana litera jest poprawna
+
+
+    if (czyMogePotwierdzic) {
+        for (let i = 0; i < 2; i++) {//losuje nowe litery na koniec tury i zamienia stan na active
+            for (let j = 0; j < 4; j++) {
+                let temp = document.getElementById("literaBtnReka" + i.toString() + "," + j.toString())
+                if (temp.classList.contains("disabled")) {
+                    temp.classList.remove("disabled");
+                    temp.childNodes[0].innerHTML = losujLitere();
+                }
+            }
+        }
+    } else {
+        alert("Nie można potwierdzic ruchu")
+    }
+
+    //usuwam historie ruchow
+    historiaRuchow = [];
+    historiaRuchowReka = [];
+
+    //TODO teraz ruch przeciwnika
+}
+
+//funkcja parsuje całą plansze z literami do jsona
+function parsujPlansze() {
+    let planszaJson = new Map();
+    for (let i = 0; i < 11; i++) {
+        for (let j = 0; j < 11; j++) {
+            let temp = document.getElementById("literaBtn" + i.toString() + "," + j.toString())
+            planszaJson.set(temp.id, temp.childNodes[0].innerHTML);
+        }
+    }
+    return Object.fromEntries(planszaJson);
 }
