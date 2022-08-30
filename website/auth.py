@@ -5,7 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
 auth = Blueprint('auth', __name__)
 
-@auth.route('/', methods=['POST'])
+@auth.route('/', methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
         email = request.form.get('email')
@@ -47,7 +47,7 @@ def new_account():
 
     return render_template("new_account.html")
 
-@auth.route('/logout')
+@auth.route('/logout',  methods = ['POST', 'GET'])
 @login_required
 def logout():
     logout_user()
