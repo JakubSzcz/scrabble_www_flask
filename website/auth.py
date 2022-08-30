@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template, request, redirect
+from email import message
+from flask import Blueprint, render_template, request, redirect, url_for
 from .models import User
 from . import db
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -8,21 +9,21 @@ auth = Blueprint('auth', __name__)
 @auth.route('/', methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
+        email = request.form.get('userName')
+        password = request.form.get('userPassword')
 
         user = User.query.filter_by(email=email).first()
         if user:
             if check_password_hash(user.password, password):
                 login_user(user, remember=True)
-                return redirect('/main')
+                return redirect(url_for("views.main", user=current_user ))
             else:
                 #niepoprawne haslo
-                return
+                return render_template("login.html", message="Niepoprawne hasło")
         else:
-            return render_template("login.html", user=current_user)
             #nie ma takiego maila
-            return
+            return render_template("login.html", message="Niepoprawny adres email")
+
 
     return render_template("login.html", user=current_user)
 
@@ -37,7 +38,7 @@ def new_account():
         user = User.query.filter_by(email=email).first()
         if user:
             # email zajety
-            return
+            return render_template("new_account.html", message="Email zajety")
         else:
             new_user = User(email=email, first_name=first_name, password=generate_password_hash(password, method='sha256'))
             db.session.add(new_user)
@@ -50,5 +51,6 @@ def new_account():
 @auth.route('/logout',  methods = ['POST', 'GET'])
 @login_required
 def logout():
+    print("siema")
     logout_user()
     return redirect('/')

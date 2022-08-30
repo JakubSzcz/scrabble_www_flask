@@ -42,7 +42,6 @@
             </div>
             <div class="card-body">
                 <form name="frm" action="{{ url_for('auth.new_account') }}" method="post">
-                    <!--TODO do czego wysyłam formularz-->
                     <div class="form-group my-2">
                         <label for="userName">Nazwa użytkownika</label>
                         <input name="userName" type="text" class="form-control my-2" id="userName"
@@ -62,8 +61,15 @@
                         <label for="userPassword2">Powtórz hasło</label>
                         <input name="userPassword2" type="text" class="form-control mt-2 mb-0" id="userPassword2"
                             placeholder="Powtórz swoje hasło">
+                        {% if message == "Email zajety" %}
+                        <small name="warrning" id="passSame" class="form-text text-danger"
+                            style="visibility:visable; position: absolute; bottom: 16%; left: 3%;text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px darkblue">
+                        Istnieje już konto zarejestrowane na podany adres email.
+                        </small>
+                        {% else %}
                         <small name="warrning" id="passSame" class="form-text text-danger"
                             style="visibility:hidden; position: absolute; bottom: 16%; left: 3%;text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px darkblue"></small>
+                        {% endif %}
                     </div>
                     <input class="btn btn-primary mt-2" type="submit" id="submitButton" value="Zarejestruj"
                         onclick="return isValid();">
@@ -79,7 +85,7 @@
     <script type="text/javascript">
 
         function isValid() {
-            
+
             //sprawdza czy puste
             let name = document.getElementById("userName");
             let password = document.getElementById("userPassword");
@@ -109,7 +115,7 @@
                 message.innerHTML = "Błąd logowania, pozostawiono puste pole.";
                 message.style.visibility = "visible";
                 return false;
-            }else {
+            } else {
                 message.style.visibility = "hidden";
             }
 
