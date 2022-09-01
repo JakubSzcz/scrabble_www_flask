@@ -14,7 +14,7 @@
 
 <body>
 
-    <!-- Modal -->
+    <!-- Modal 0 stworz gre -->
     <div class="modal fade" id="staticBackdrop0" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel0" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -40,6 +40,7 @@
         </div>
     </div>
 
+    <!-- Modal 1 dolacz do gry-->
     <div class="modal fade" id="staticBackdrop1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -72,12 +73,14 @@
                     <label for="submitButton" tabindex="0" class="btn btn-success" type="button" id="joinGameModal"
                         onclick="return isValid();">Dołącz</label>
                     <!--TODO może nie działać bo submit poza formem, naprawa to z powrotem dać to do wnetrza forma  -->
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="return resetForm();">Zamknij</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal"
+                        onclick="return resetForm();">Zamknij</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Modal 2 historia gier -->
     <div class="modal fade" id="staticBackdrop2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel2" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -87,14 +90,35 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    Pellentesque sed nunc a mauris blandit varius. Nunc porttitor, lacus eget semper viverra, nisi felis
-                    dictum dui, ac maximus magna ligula a ipsum. Curabitur ut viverra felis. Quisque varius commodo
-                    nunc. Aliquam vehicula quis eros dapibus auctor. Suspendisse venenatis tellus vel lectus volutpat,
-                    non condimentum lorem rutrum. Duis gravida sodales diam eget commodo. Maecenas porta maximus risus,
-                    et faucibus lectus fermentum a. Donec eros sem, suscipit ut condimentum in, consectetur vitae sem.
-                    Mauris purus ante, malesuada quis porta sit amet, mollis a erat. Interdum et malesuada fames ac ante
-                    ipsum primis in faucibus.
+                    {% if current_user.games == null %}
+                    Ups... Wygląda na to że nie rozegrałeś jeszcze żadnej gry. Nic straconego! Kliknij w Stwórz nową grę
+                    lub dołącz do już trwającej rozgrywki ze znajomym!
 
+                    {% else %}
+                    <table class="table">
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col-sm">Wygrany</th>
+                                <th scope="col-sm">Data</th>
+                                <th scope="col-sm">Wynik</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in current_user.games %}
+                            {% if item.winner == current_user.first_name %}
+                            <tr class="table-success">
+                                {% else %}
+                            <tr class="table-danger">
+                                {% endif %}
+                                <td>{{item.winner}}</td>
+                                <td>{{item.time}}</td>
+                                <td>{{item.score}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    {% endif %}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Zamknij</button>
@@ -102,7 +126,7 @@
             </div>
         </div>
     </div>
-
+    <!-- Modal 3 jak grac -->
     <div class="modal fade" id="staticBackdrop3" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel3" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
