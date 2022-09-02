@@ -42,6 +42,7 @@ def new_account():
             return render_template("new_account.html", message="Email zajety")
         else:
             new_user = User(email=email, first_name=first_name, password=generate_password_hash(password, method='sha256'))
+            #testowe
             db.session.add(new_user)
             db.session.commit()
             test_game0 = Game(winner="test0", time="test0", score="test0", user=new_user)

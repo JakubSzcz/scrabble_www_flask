@@ -45,6 +45,7 @@ for (let i = 0; i < 11; i++) {
         literaBtn.setAttribute('class', "btn btn-normal mojaLitera");
         literaBtn.setAttribute('id', ('literaBtn' + i.toString() + "," + j.toString())); //id przycisku: literaBtnX,Y
         let litera = document.createElement("h1"); // litera w przycisku
+        litera.innerHTML = "";
         litera.setAttribute('id', ('litera' + i.toString() + j.toString())); //id litery: literaXY
         literaBtn.appendChild(litera);
         literaBtn.setAttribute('onclick', "return skopiujWartosc(this);"); //po nacisnieciu wywoluje skopiujWartosc, this-> obiekt wciśniety Btn
@@ -228,5 +229,39 @@ function parsujPlansze() {
             planszaJson.set(temp.id, temp.childNodes[0].innerHTML);
         }
     }
-    return Object.fromEntries(planszaJson);
+    return Object.fromEntries(planszaJson); //zwraca json z danymi planszy id:wartosc literaBtnX,Y: "x"
 }
+
+//obsługa socketow
+$(document).ready(function () {
+
+    var socket = io.connect('http://127.0.0.1:5000'); //łacze z serwerm
+
+    socket.on('connect', function () {
+        socket.send('User "{{current_user.first_name}}" has connected!'); //jeśli połączy drukuje to
+    });
+
+    socket.on('message', function (msg) {
+        for (let i = 0; i < 11; i++) {
+            for (let j = 0; j < 11; j++) {
+                let temp_name = "literaBtn" + i.toString() + "," + j.toString();
+                let temp = document.getElementById(temp_name)
+                temp.childNodes[0].innerHTML = msg[temp_name];
+                if (msg[temp_name] !== undefined && typeof msg[temp_name] != 'undefined') {
+                    temp.childNodes[0].innerHTML = msg[temp_name];
+                }else{
+                    temp.childNodes[0].innerHTML = "";
+                }
+                if(temp.childNodes[0].innerHTML !== ""){
+                    temp.classList.add("active");
+                }
+
+            }
+        }
+    });
+
+    $('#potwierdzRuchBtn').on('click', function () {
+        socket.send(parsujPlansze());
+    });
+
+});
