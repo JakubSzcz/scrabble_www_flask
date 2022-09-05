@@ -65,7 +65,7 @@
                         {% if message == "Email zajety" %}
                         <small name="warrning" id="passSame" class="form-text text-danger"
                             style="visibility:visable; position: absolute; bottom: 16%; left: 3%;text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px darkblue">
-                        Istnieje już konto zarejestrowane na podany adres email.
+                            Istnieje już konto zarejestrowane na podany adres email.
                         </small>
                         {% else %}
                         <small name="warrning" id="passSame" class="form-text text-danger"
@@ -80,68 +80,14 @@
         </div>
     </div>
 
-
-
-
-    <script type="text/javascript">
-
-        function isValid() {
-
-            //sprawdza czy puste
-            let name = document.getElementById("userName");
-            let password = document.getElementById("userPassword");
-            let password2 = document.getElementById("userPassword2");
-            let email = document.getElementById("userEmail");
-            let message = document.getElementById("passSame");
-            let elements = [name, password, password2, email];
-            let flag = false;
-
-            for (let temp of elements) {
-                if (temp.value.trim() === "") {
-                    temp.classList.add('is-invalid');
-                    flag = true;
-                } else {
-                    for (let temp of elements) {
-                        if (temp.value.trim() !== "") {
-                            try {
-                                temp.classList.remove('is-invalid');
-                            } catch { }
-                            temp.classList.add('is-valid');
-                        }
-                    }
-                }
-            }
-
-            if (flag) {
-                message.innerHTML = "Błąd logowania, pozostawiono puste pole.";
-                message.style.visibility = "visible";
-                return false;
-            } else {
-                message.style.visibility = "hidden";
-            }
-
-            //sprawdza czy hasło takie samo
-            if (password.value !== password2.value) {
-                message.innerHTML = "Błąd logowania, hasła są różne.";
-                message.style.visibility = "visible";
-                try {
-                    password2.classList.remove('is-valid');
-                } catch { }
-                password2.classList.add('is-invalid');
-                return false;
-            }
-
-            return true;
-        }
-
-    </script>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
         </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
         integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="../static/scripts/new_account.js"></script>
 </body>
 
 </html>
