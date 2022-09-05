@@ -8,6 +8,13 @@ var historiaRuchowReka = []; //tablica wsporzednych wybranych przyciskow z reki-
 var plansza = document.getElementById("planszaDiv"); // div z plansza do gry na litery- obiekt div
 var czyMogePotwierdzic = true;
 var czyMogeWybracLitere = true; //czy moge znow kliknac na litere na rece
+var mojaTura = false; //sprawdza czy moge teraz wykonac ture bool
+var userName = $('#userName').data()["current_user.first_name"]; //nazwa gracza String
+var listaGraczy; //lista graczy STRING
+var punktyGraczy; //TODO
+var startGry = true; //flaga sprawdza czy to pierwszy ruch w grze, uzywane przy starcie gry
+var czyjaTura; //string z nazwa gracza ktory wykonuje ruch
+
 
 
 // tworzenie DOM
@@ -93,7 +100,6 @@ for (let i = 4; i <= 6; i = i + 2) {
     document.getElementById("literaBtn" + (i).toString() + "," + "1").classList.add("btn-litera2");
     document.getElementById("literaBtn" + (i).toString() + "," + "9").classList.add("btn-litera2");
 }
-
 
 //funkcje
 
@@ -187,16 +193,54 @@ function cofnijRuch() {
     }
 }
 
+//aktywuje przyciski na rece
+function aktywuj_przyciki() {
+    //przyciski
+    document.getElementById("cofnijRuchBtn").classList.remove("disabled");
+    document.getElementById("potwierdzRuchBtn").classList.remove("disabled");
+    document.getElementById("pominTureBtn").classList.remove("disabled");
+    document.getElementById("wymienLitereBtn").classList.remove("disabled");
+    //przyciski z literami
+    for (let i = 0; i < 2; i++) {
+        for (let j = 0; j < 4; j++) {
+            let literaBtnReka = document.getElementById('literaBtnReka' + i.toString() + "," + j.toString()); //przycisk
+            literaBtnReka.classList.remove("disabled");
+        }
+    }
+}
+
+//dezaktywuje przyciski na rece
+function dezaktywuj_przyciski() {
+    //przyciski
+    document.getElementById("cofnijRuchBtn").classList.add("disabled");
+    document.getElementById("potwierdzRuchBtn").classList.add("disabled");
+    document.getElementById("pominTureBtn").classList.add("disabled");
+    document.getElementById("wymienLitereBtn").classList.add("disabled");
+
+    //przyciski z literami
+    for (let i = 0; i < 2; i++) {
+        for (let j = 0; j < 4; j++) {
+            let literaBtnReka = document.getElementById('literaBtnReka' + i.toString() + "," + j.toString()); //przycisk
+            literaBtnReka.classList.add("disabled");
+        }
+    }
+}
+
+
 //funkcj odpala sie po naciśnieciu przycisku potwierdz ruch, usuwa historie ruchow, losuje nowe litery i włącza je znów do użycia
-//TODO-- ajaxem wysyłam słowo do serwera
 function potwierdzRuch() {
 
-    if (historiaRuchow.length === 0) {//sprawdza czy wykonano jakikolwiek ruch
+    if (!mojaTura) { //raczej zbedne bo przyciki i tak disabled jak nie twoja tura ale niech zostanie
+        alert("Nie twoj ruch!")
+        return 0;
+    }
+
+    if (historiaRuchow.length === 0) {//sprawdza czy wykonano jakikolwiek ruch przed potwierdzeniem
         czyMogePotwierdzic = false;
     }
 
 
-    //tu funkcja ktora sprawdz na serwerze czy wpisana litera jest poprawna
+    //TODO tu funkcja ktora sprawdz na serwerze czy wpisana litera jest poprawna
 
 
     if (czyMogePotwierdzic) {
@@ -217,7 +261,18 @@ function potwierdzRuch() {
     historiaRuchow = [];
     historiaRuchowReka = [];
 
-    //TODO teraz ruch przeciwnika
+    //zmiana tury, jeśli indeks wiekszy niz dlugosc tablicy z graczami to zmienia ture od poczatku, kolejnosc graczy w zaleznosci od dolaczenia
+    {
+        let id = listaGraczy.indexOf(czyjaTura);
+        if (id === listaGraczy.length - 1) {
+            czyjaTura = listaGraczy[0];
+        } else {
+            czyjaTura = listaGraczy[id + 1];
+        }
+    }
+
+    mojaTura = false; //bo przesłaniu jsona z plansza zmieniam moja ture na false i dezaktywuje plansze
+    dezaktywuj_przyciski();
 }
 
 //funkcja parsuje całą plansze z literami do jsona
@@ -233,35 +288,83 @@ function parsujPlansze() {
 }
 
 //obsługa socketow
-$(document).ready(function () {
+$(document).ready(function () {//gdy wczyta cały dokument
 
     var socket = io.connect('http://127.0.0.1:5000'); //łacze z serwerm
 
-    socket.on('connect', function () {
-        socket.send('User "{{current_user.first_name}}" has connected!'); //jeśli połączy drukuje to
-    });
-
-    socket.on('message', function (msg) {
-        for (let i = 0; i < 11; i++) {
+    socket.emit('lista_graczy', userName); //emituje do wydarzenia lista graczy zmienna userName
+    //
+    socket.on('message', function (data) { //na wydarzenie message wykonuje funkcje ze zmienna data
+        let msg, czyjaTuraSerwer; //json data zamieniany na msg- json planszy, czyja tura String
+        msg = data["plansza"];
+        czyjaTuraSerwer = data["czyjaTura"]
+        for (let i = 0; i < 11; i++) { //wypelnia plansze wartosciami z jsona, jesli nie ma wartosci daje ""
             for (let j = 0; j < 11; j++) {
                 let temp_name = "literaBtn" + i.toString() + "," + j.toString();
                 let temp = document.getElementById(temp_name)
                 temp.childNodes[0].innerHTML = msg[temp_name];
                 if (msg[temp_name] !== undefined && typeof msg[temp_name] != 'undefined') {
                     temp.childNodes[0].innerHTML = msg[temp_name];
-                }else{
+                } else {
                     temp.childNodes[0].innerHTML = "";
                 }
-                if(temp.childNodes[0].innerHTML !== ""){
+                if (temp.childNodes[0].innerHTML !== "") { //bo pole uzyte
                     temp.classList.add("active");
                 }
 
             }
         }
+        czyjaTura = czyjaTuraSerwer; //przekazuje ture pomiedzy graczami
+        if (czyjaTura === userName) { //jesli teraz moja tura to aktywuje przyciski
+            mojaTura = true;
+            aktywuj_przyciki();
+        }
+
+        if (mojaTura) {//napis informujacy czyja tura, do konca nie dziala nie wiem czemu, przy pierwszej turze sie nie wyswietla
+            document.getElementById("czyjaTuraInfo").innerHTML = "<b>Twój ruch!</b>";
+        } else {
+            document.getElementById("czyjaTuraInfo").innerHTML = "Akutalnie ruch wykonuje " + "<b>" + czyjaTuraSerwer + "</b>";
+        }
     });
 
-    $('#potwierdzRuchBtn').on('click', function () {
-        socket.send(parsujPlansze());
+    $('#potwierdzRuchBtn').on('click', function () { //po kliknieciu potwierdz przyciksk
+        socket.emit('odbierz_plansze', parsujPlansze(), czyjaTura); //emituje do wydarzenia odbierz plansze zmienne parsuj plansze i czyjaTura
     });
 
+    $('#pominTureBtn').on('click', function () {
+        //TODO
+    });
+
+    socket.on("odbierz_liste_graczy", function (users) { //odbiera zmienna z lista graczy od serwera na wydarzeniu odbierz_liste_graczy
+        listaGraczy = users;
+        //TODO if lista graczy == 1 nie zaczniesz bo za mało graczy
+        let tabelaUserow = document.getElementById("listaUzytkownikow"); //tworze i wypełniam tablice z graczami
+        for (let i = 0; i < listaGraczy.length; i++) {
+            if (tabelaUserow.rows.length != listaGraczy.length) {
+                let temp_row = document.createElement("tr");
+                let nazwaGracza = document.createElement("td");
+                let punktyGracza = document.createElement("td");
+                punktyGracza.setAttribute("id", "wynikGracza" + i.toString())
+                let roznicaGracza = document.createElement("td");
+                roznicaGracza.setAttribute("id", "roznicaGracza" + i.toString())
+                nazwaGracza.innerHTML = listaGraczy[i];
+                punktyGracza.innerHTML = "0";
+                roznicaGracza.innerHTML = "0";
+                temp_row.appendChild(nazwaGracza);
+                temp_row.appendChild(punktyGracza);
+                temp_row.appendChild(roznicaGracza);
+                tabelaUserow.appendChild(temp_row);
+            }
+        }
+        if (startGry) {   //start gry- jak pierwszy wszedłeś to zaczynasz
+            startGry == false;
+            czyjaTura = listaGraczy[0];
+        }
+        if (czyjaTura === userName) { // start gry= jak twoja tura to zaczynasz
+            mojaTura = true;
+        } else {
+            dezaktywuj_przyciski(); //jeśli nie zaczynasz na poczatku tury to nie mozesz uzyc przyciskow
+        }
+
+    });
 });
