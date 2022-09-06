@@ -5,7 +5,7 @@ from flask_socketio import SocketIO, send, emit
 
 app = create_app()
 socketio = SocketIO(app, cors_allowed_origins='*')
-users = []
+users = [] #lista z graczami
 
 
 

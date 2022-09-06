@@ -6,14 +6,14 @@ var literaDoKopiowania = ""; //wartosc litery do skopiowania z reki do planszy- 
 let planszaReka = document.getElementById("rekaDiv"); //div z literami w rece- obiekt div
 var historiaRuchowReka = []; //tablica wsporzednych wybranych przyciskow z reki- STRING
 var plansza = document.getElementById("planszaDiv"); // div z plansza do gry na litery- obiekt div
-var czyMogePotwierdzic = true;
 var czyMogeWybracLitere = true; //czy moge znow kliknac na litere na rece
 var mojaTura = false; //sprawdza czy moge teraz wykonac ture bool
-var userName = $('#userName').data()["current_user.first_name"]; //nazwa gracza String
+var userName;  //nazwa gracza String
 var listaGraczy; //lista graczy STRING
 var punktyGraczy; //TODO
 var startGry = true; //flaga sprawdza czy to pierwszy ruch w grze, uzywane przy starcie gry
 var czyjaTura; //string z nazwa gracza ktory wykonuje ruch
+var socket = io.connect('http://127.0.0.1:5000'); //łacze z serwerm
 
 
 
@@ -84,7 +84,7 @@ for (let i = 0; i < 11; i++) {
 }
 //pole startu
 document.getElementById("literaBtn5,5").classList.remove("btn-normal");
-document.getElementById("literaBtn5,5").classList.add("btn-start")
+document.getElementById("literaBtn5,5").classList.add("btn-start");
 //trojkaty po bokach
 for (let i = 0; i <= 10; i = i + 10) {
     document.getElementById("literaBtn" + (i).toString() + "," + "5").classList.add("btn-litera3");
@@ -145,10 +145,10 @@ function skopiujWartosc(przycisk1) {
             document.getElementById(historiaRuchowReka[historiaRuchowReka.length - 1]).classList.remove("btn-success");
             czyMogeWybracLitere = true;
         } else {//pole jest zajete
-            alert("Pole jest już zajęte!")
+            alert("Pole jest już zajęte!");
         }
     } else {//gracz nie wybral litery
-        alert("Najpierw wybierz litere")
+        alert("Najpierw wybierz litere");
     }
 }
 
@@ -189,7 +189,7 @@ function cofnijRuch() {
         temp = document.getElementById(historiaRuchowReka.pop()); //wspolrzedne ruchu na rece
         temp.classList.remove("disabled"); //odblokowanie litery na rece
     } else {//nie wykonano zadnych ruchow
-        alert("Nie można cofnąć ruchu.")
+        alert("Nie można cofnąć ruchu.");
     }
 }
 
@@ -226,41 +226,31 @@ function dezaktywuj_przyciski() {
     }
 }
 
-
 //funkcj odpala sie po naciśnieciu przycisku potwierdz ruch, usuwa historie ruchow, losuje nowe litery i włącza je znów do użycia
 function potwierdzRuch() {
-
-    if (!mojaTura) { //raczej zbedne bo przyciki i tak disabled jak nie twoja tura ale niech zostanie
-        alert("Nie twoj ruch!")
-        return 0;
-    }
-
     if (historiaRuchow.length === 0) {//sprawdza czy wykonano jakikolwiek ruch przed potwierdzeniem
-        czyMogePotwierdzic = false;
+        alert("Nie można potwierdzic ruchu");
+        return 0;
     }
 
 
     //TODO tu funkcja ktora sprawdz na serwerze czy wpisana litera jest poprawna
 
 
-    if (czyMogePotwierdzic) {
-        for (let i = 0; i < 2; i++) {//losuje nowe litery na koniec tury i zamienia stan na active
-            for (let j = 0; j < 4; j++) {
-                let temp = document.getElementById("literaBtnReka" + i.toString() + "," + j.toString())
-                if (temp.classList.contains("disabled")) {
-                    temp.classList.remove("disabled");
-                    temp.childNodes[0].innerHTML = losujLitere();
-                }
+
+    for (let i = 0; i < 2; i++) {//losuje nowe litery na koniec tury i zamienia stan na active
+        for (let j = 0; j < 4; j++) {
+            let temp = document.getElementById("literaBtnReka" + i.toString() + "," + j.toString());
+            if (temp.classList.contains("disabled")) {
+                temp.classList.remove("disabled");
+                temp.childNodes[0].innerHTML = losujLitere();
             }
         }
-    } else {
-        alert("Nie można potwierdzic ruchu")
     }
 
     //usuwam historie ruchow
     historiaRuchow = [];
     historiaRuchowReka = [];
-
     //zmiana tury, jeśli indeks wiekszy niz dlugosc tablicy z graczami to zmienia ture od poczatku, kolejnosc graczy w zaleznosci od dolaczenia
     {
         let id = listaGraczy.indexOf(czyjaTura);
@@ -270,9 +260,11 @@ function potwierdzRuch() {
             czyjaTura = listaGraczy[id + 1];
         }
     }
-
+    //emituje na event odbierz_plansze zmienne parsujPlansze i czyjaTura
+    socket.emit('odbierz_plansze', parsujPlansze(), czyjaTura);
     mojaTura = false; //bo przesłaniu jsona z plansza zmieniam moja ture na false i dezaktywuje plansze
     dezaktywuj_przyciski();
+
 }
 
 //funkcja parsuje całą plansze z literami do jsona
@@ -280,7 +272,7 @@ function parsujPlansze() {
     let planszaJson = new Map();
     for (let i = 0; i < 11; i++) {
         for (let j = 0; j < 11; j++) {
-            let temp = document.getElementById("literaBtn" + i.toString() + "," + j.toString())
+            let temp = document.getElementById("literaBtn" + i.toString() + "," + j.toString());
             planszaJson.set(temp.id, temp.childNodes[0].innerHTML);
         }
     }
@@ -289,19 +281,16 @@ function parsujPlansze() {
 
 //obsługa socketow
 $(document).ready(function () {//gdy wczyta cały dokument
-
-    var socket = io.connect('http://127.0.0.1:5000'); //łacze z serwerm
-
-    socket.emit('lista_graczy', userName); //emituje do wydarzenia lista graczy zmienna userName
-    //
+    userName = document.getElementById("userNameinfo").innerHTML.slice(0,-1); //bierze nazwe gracza
+    //socket.emit('lista_graczy', userName); //emituje do wydarzenia lista graczy zmienna userName
     socket.on('message', function (data) { //na wydarzenie message wykonuje funkcje ze zmienna data
         let msg, czyjaTuraSerwer; //json data zamieniany na msg- json planszy, czyja tura String
         msg = data["plansza"];
-        czyjaTuraSerwer = data["czyjaTura"]
+        czyjaTuraSerwer = data["czyjaTura"];
         for (let i = 0; i < 11; i++) { //wypelnia plansze wartosciami z jsona, jesli nie ma wartosci daje ""
             for (let j = 0; j < 11; j++) {
                 let temp_name = "literaBtn" + i.toString() + "," + j.toString();
-                let temp = document.getElementById(temp_name)
+                let temp = document.getElementById(temp_name);
                 temp.childNodes[0].innerHTML = msg[temp_name];
                 if (msg[temp_name] !== undefined && typeof msg[temp_name] != 'undefined') {
                     temp.childNodes[0].innerHTML = msg[temp_name];
@@ -311,7 +300,6 @@ $(document).ready(function () {//gdy wczyta cały dokument
                 if (temp.childNodes[0].innerHTML !== "") { //bo pole uzyte
                     temp.classList.add("active");
                 }
-
             }
         }
         czyjaTura = czyjaTuraSerwer; //przekazuje ture pomiedzy graczami
@@ -327,13 +315,13 @@ $(document).ready(function () {//gdy wczyta cały dokument
         }
     });
 
-    $('#potwierdzRuchBtn').on('click', function () { //po kliknieciu potwierdz przyciksk
-        socket.emit('odbierz_plansze', parsujPlansze(), czyjaTura); //emituje do wydarzenia odbierz plansze zmienne parsuj plansze i czyjaTura
-    });
-
     $('#pominTureBtn').on('click', function () {
         //TODO
     });
+
+    socket.on("connect", function(){
+        socket.emit('lista_graczy', userName);
+    })
 
     socket.on("odbierz_liste_graczy", function (users) { //odbiera zmienna z lista graczy od serwera na wydarzeniu odbierz_liste_graczy
         listaGraczy = users;
@@ -344,9 +332,9 @@ $(document).ready(function () {//gdy wczyta cały dokument
                 let temp_row = document.createElement("tr");
                 let nazwaGracza = document.createElement("td");
                 let punktyGracza = document.createElement("td");
-                punktyGracza.setAttribute("id", "wynikGracza" + i.toString())
+                punktyGracza.setAttribute("id", "wynikGracza" + i.toString());
                 let roznicaGracza = document.createElement("td");
-                roznicaGracza.setAttribute("id", "roznicaGracza" + i.toString())
+                roznicaGracza.setAttribute("id", "roznicaGracza" + i.toString());
                 nazwaGracza.innerHTML = listaGraczy[i];
                 punktyGracza.innerHTML = "0";
                 roznicaGracza.innerHTML = "0";
@@ -365,6 +353,5 @@ $(document).ready(function () {//gdy wczyta cały dokument
         } else {
             dezaktywuj_przyciski(); //jeśli nie zaczynasz na poczatku tury to nie mozesz uzyc przyciskow
         }
-
     });
 });
