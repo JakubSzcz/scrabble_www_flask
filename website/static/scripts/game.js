@@ -14,6 +14,7 @@ var punktyGraczy; //TODO
 var startGry = true; //flaga sprawdza czy to pierwszy ruch w grze, uzywane przy starcie gry
 var czyjaTura; //string z nazwa gracza ktory wykonuje ruch
 var socket = io.connect('http://127.0.0.1:5000'); //łacze z serwerm
+var numer = window.location.search.substring(1);
 
 
 
@@ -261,7 +262,7 @@ function potwierdzRuch() {
         }
     }
     //emituje na event odbierz_plansze zmienne parsujPlansze i czyjaTura
-    socket.emit('odbierz_plansze', parsujPlansze(), czyjaTura);
+    socket.emit('odbierz_plansze', parsujPlansze(), czyjaTura, numer);
     mojaTura = false; //bo przesłaniu jsona z plansza zmieniam moja ture na false i dezaktywuje plansze
     dezaktywuj_przyciski();
 
@@ -320,10 +321,10 @@ $(document).ready(function () {//gdy wczyta cały dokument
     });
 
     socket.on("connect", function(){
-        socket.emit('lista_graczy', userName);
+        socket.emit('lista_graczy', userName, numer);
     })
 
-    socket.on("odbierz_liste_graczy", function (users) { //odbiera zmienna z lista graczy od serwera na wydarzeniu odbierz_liste_graczy
+    socket.on("odbierz_liste_graczy", function (users, numer) { //odbiera zmienna z lista graczy od serwera na wydarzeniu odbierz_liste_graczy
         listaGraczy = users;
         //TODO if lista graczy == 1 nie zaczniesz bo za mało graczy
         let tabelaUserow = document.getElementById("listaUzytkownikow"); //tworze i wypełniam tablice z graczami
@@ -354,4 +355,5 @@ $(document).ready(function () {//gdy wczyta cały dokument
             dezaktywuj_przyciski(); //jeśli nie zaczynasz na poczatku tury to nie mozesz uzyc przyciskow
         }
     });
+    document.getElementById("numerInfo").innerHTML = numer;
 });

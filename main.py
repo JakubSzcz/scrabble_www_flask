@@ -1,6 +1,8 @@
+import time
 from unicodedata import name
 from website import create_app
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
+from flask import redirect, url_for, render_template
 
 
 app = create_app()
@@ -12,8 +14,11 @@ listaGier = {}
 @socketio.on("dolacz_do_gry")
 def dolaczDoGry(numer, haslo):
     if numer not in listaGier:
+        print("siema " + numer)
         listaGier[numer] = haslo #tworze pokoj
         join_room(numer)
+        data = {"numer":numer,"haslo":haslo}
+        emit("redirect_to_game")
     else: # dołączam do już istniejącego pokoju
         if listaGier[numer] == haslo:
             join_room(numer)
@@ -29,6 +34,7 @@ def odbierzPlansze(plansza, czyjaTura, numer):
 @socketio.on("lista_graczy")
 def lista_graczy(userName, numer):
     if len(users) == 0: #pierwszy gracz
+        print(numer)
         users.append(userName)
     else:
         flaga = True
@@ -38,7 +44,7 @@ def lista_graczy(userName, numer):
         if flaga:
             users.append(userName)
 
-    send("odbierz_liste_graczy", users, to=numer)
+    emit("odbierz_liste_graczy", users, to=numer)
 
 
 

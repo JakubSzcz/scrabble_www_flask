@@ -1,3 +1,6 @@
+
+var socket = io.connect('http://127.0.0.1:5000'); //łacze z serwerm
+
 function isValid() {
 
     let name = document.getElementById("roomName");
@@ -48,3 +51,18 @@ function resetForm() {
 
     return true;
 }
+
+$(document).ready(function () {
+    $('#joinGameModal').on('click', function () {
+        console.log("numer" + "testnumeru")
+        var numer = document.getElementById("roomName").value;
+        var haslo = document.getElementById("roomPassword").value;
+
+        socket.emit("dolacz_do_gry", numer, haslo)
+    });
+
+    socket.on("redirect_to_game", function () {
+        var numer = document.getElementById("roomName").value;
+        window.location.href = "/game" + "?" + numer;
+    });
+});

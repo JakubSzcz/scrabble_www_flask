@@ -3,7 +3,7 @@ from flask_login import login_required
 
 views = Blueprint('views', __name__)
 
-@views.route('/main')
+@views.route('/main', methods=['POST', 'GET'])
 @login_required
 def main():
     return render_template("main.html")
