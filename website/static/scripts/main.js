@@ -63,6 +63,7 @@ $(document).ready(function () {
 
     socket.on("redirect_to_game", function () {
         var numer = document.getElementById("roomName").value;
-        window.location.href = "/game" + "?" + numer;
+        var haslo = document.getElementById("roomPassword").value;
+        window.location.href = "/game" + "?" + numer + "?" + haslo + "?";
     });
 });

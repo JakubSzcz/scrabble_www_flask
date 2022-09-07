@@ -7,6 +7,6 @@ game = Blueprint('game', __name__)
 @game.route('/game', methods=['POST', 'GET'])
 @login_required
 def game_func():
-    print("siema")
+    #print("siema")
     return render_template("game.html", user=current_user)
     

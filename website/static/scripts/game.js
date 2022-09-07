@@ -15,7 +15,11 @@ var startGry = true; //flaga sprawdza czy to pierwszy ruch w grze, uzywane przy 
 var czyjaTura; //string z nazwa gracza ktory wykonuje ruch
 var socket = io.connect('http://127.0.0.1:5000'); //łacze z serwerm
 var numer = window.location.search.substring(1);
-
+var haslo = numer.substring(
+    numer.indexOf("?") + 1, 
+    numer.lastIndexOf("?")
+);
+numer = numer.substring(0, numer.indexOf("?"))
 
 
 // tworzenie DOM
@@ -321,11 +325,14 @@ $(document).ready(function () {//gdy wczyta cały dokument
     });
 
     socket.on("connect", function(){
+        socket.emit('dolacz_do_gry', numer, haslo)
         socket.emit('lista_graczy', userName, numer);
+        socket.emit('odbierz_plansze', parsujPlansze(), czyjaTura, numer);
     })
 
-    socket.on("odbierz_liste_graczy", function (users, numer) { //odbiera zmienna z lista graczy od serwera na wydarzeniu odbierz_liste_graczy
+    socket.on("odbierz_liste_graczy", function (users) { //odbiera zmienna z lista graczy od serwera na wydarzeniu odbierz_liste_graczy
         listaGraczy = users;
+        console.log("odebrano liste graczy")
         //TODO if lista graczy == 1 nie zaczniesz bo za mało graczy
         let tabelaUserow = document.getElementById("listaUzytkownikow"); //tworze i wypełniam tablice z graczami
         for (let i = 0; i < listaGraczy.length; i++) {
