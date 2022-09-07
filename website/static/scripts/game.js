@@ -19,6 +19,7 @@ var haslo = numer.substring(
     numer.indexOf("?") + 1, 
     numer.lastIndexOf("?")
 );
+let slowa = [];
 numer = numer.substring(0, numer.indexOf("?"))
 
 
@@ -269,7 +270,7 @@ function potwierdzRuch() {
     socket.emit('odbierz_plansze', parsujPlansze(), czyjaTura, numer);
     mojaTura = false; //bo przesłaniu jsona z plansza zmieniam moja ture na false i dezaktywuje plansze
     dezaktywuj_przyciski();
-
+    sprawdzPoprawnosc();
 }
 
 //funkcja parsuje całą plansze z literami do jsona
@@ -282,6 +283,80 @@ function parsujPlansze() {
         }
     }
     return Object.fromEntries(planszaJson); //zwraca json z danymi planszy id:wartosc literaBtnX,Y: "x"
+}
+
+/*function sprawdzPoprawnosc(){
+    let wykluczoneZi = []
+    let wykluczoneZj = []
+    for (let i = 0; i < 11; i++) {
+        for (let j = 0; j < 11; j++) {
+            if ((document.getElementById("literaBtn" + i.toString() + "," + j.toString()).childNodes[0].innerHTML) != ''){
+                //sprawdzam w osi j:
+                tempSlowo = '';
+                t = 0;
+                while ((document.getElementById("literaBtn" + i.toString() + "," + (j+t).toString()).childNodes[0].innerHTML) != '' && !(wykluczoneZj.some((element) => element == [i, (j+t)]))){
+                    tempSlowo = tempSlowo.concat((document.getElementById("literaBtn" + i.toString() + "," + (j+t).toString()).childNodes[0].innerHTML))
+                    wykluczoneZj.push([i, j])
+                    if(j+t == 11) break;
+                    t++;
+                }
+                //sprawdzam w osi i
+                tempSlowo = '';
+                t = 0;
+                while ((document.getElementById("literaBtn" + (i+t).toString() + "," + j.toString()).childNodes[0].innerHTML) != '' && !(wykluczoneZi.some((element) => element == [(i+t), j]))){
+                    tempSlowo = tempSlowo.concat((document.getElementById("literaBtn" + (i+t).toString() + "," + j.toString()).childNodes[0].innerHTML))
+                    wykluczoneZi.push([i, j])
+                    if(i+t == 11) break;
+                    t++;
+                }
+                console.log(wykluczoneZi)
+                console.log(wykluczoneZj)
+            }
+        }
+    }
+}*/
+
+$.get('/slownik.txt',{},function(content){ //jaki adres słownika?
+    slowa = content.split('\n');
+    console.log(slowa[3])
+});
+
+function sprawdzPoprawnosc(){
+    for (let i = 0; i < 11; i++) {
+        let liniaI = ''
+        for (let j = 0; j < 11; j++) {
+            if ((document.getElementById("literaBtn" + i.toString() + "," + j.toString()).childNodes[0].innerHTML) == ''){
+                liniaI = liniaI.concat(" ")
+            } else {
+                liniaI = liniaI.concat((document.getElementById("literaBtn" + i.toString() + "," + j.toString()).childNodes[0].innerHTML))
+            }
+        }
+        liniaI = liniaI.split(" ")
+        for(let t = 0; t < liniaI.length; t++){
+            if (liniaI[t].length > 1){
+                console.log(liniaI[t])
+                //kod sprawdzający słownik
+            }
+        }
+    }
+    for (let j = 0; j < 11; j++) {
+        let liniaJ = ''
+        for (let i = 0; i < 11; i++) {
+            if ((document.getElementById("literaBtn" + i.toString() + "," + j.toString()).childNodes[0].innerHTML) == ''){
+                liniaJ = liniaJ.concat(" ")
+            } else {
+                liniaJ = liniaJ.concat((document.getElementById("literaBtn" + i.toString() + "," + j.toString()).childNodes[0].innerHTML))
+            }
+        }
+        liniaJ = liniaJ.split(" ")
+        for(let t = 0; t < liniaJ.length; t++){
+            if (liniaJ[t].length > 1){
+                console.log(liniaJ[t])
+                //kod sprawdzający słownik
+            }
+        }
+    }
+    return true;
 }
 
 //obsługa socketow
