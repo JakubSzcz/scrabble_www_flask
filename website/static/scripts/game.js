@@ -16,7 +16,7 @@ var czyjaTura; //string z nazwa gracza ktory wykonuje ruch
 var socket = io.connect('http://127.0.0.1:5000'); //łacze z serwerm
 var numer = window.location.search.substring(1);
 var haslo = numer.substring(
-    numer.indexOf("?") + 1, 
+    numer.indexOf("?") + 1,
     numer.lastIndexOf("?")
 );
 let slowa = [];
@@ -238,6 +238,21 @@ function potwierdzRuch() {
         alert("Nie można potwierdzic ruchu");
         return 0;
     }
+    //sprawdzam czy zajeto pole startu
+    if (document.getElementById("literaBtn5,5").childNodes[0].innerHTML == "") {
+        alert("Musisz zajać pole startu!");
+        let temp_leng = historiaRuchow.length;
+        for(let x = 0; x<temp_leng; x++){
+            cofnijRuch();
+        }
+        return 0;
+    }
+    //sprawdzam czy dobrze umiejscowiony litery, sprawdzam czy kazda litera ma przynajmniej jednego sasiada
+    for (let i = 0; i < 11; i++) {
+        for (let j = 0; j < 11; j++) {
+            czyMaSaiada(i,j);
+        }
+    }
 
 
     //TODO tu funkcja ktora sprawdz na serwerze czy wpisana litera jest poprawna
@@ -284,6 +299,40 @@ function parsujPlansze() {
     return Object.fromEntries(planszaJson); //zwraca json z danymi planszy id:wartosc literaBtnX,Y: "x"
 }
 
+function czyMaSaiada(t, y){
+    let sasiedzi = 0;
+    if (document.getElementById("literaBtn" + t.toString() + "," + y.toString()).childNodes[0].innerHTML != "") { // wyszukuje indeksy liter ktore maja wartosc
+        try {
+            if (document.getElementById("literaBtn" + (t).toString() + "," + (y + 1).toString()).childNodes[0].innerHTML !== "") { //w prawo
+                sasiedzi++;
+            }
+        } catch { };
+        try {
+            if (document.getElementById("literaBtn" + (t).toString() + "," + (y - 1).toString()).childNodes[0].innerHTML !== "") { // w lewo
+                sasiedzi++;
+            }
+        } catch { };
+        try {
+            if (document.getElementById("literaBtn" + (t - 1).toString() + "," + (y).toString()).childNodes[0].innerHTML !== "") { // w gore
+                sasiedzi++;
+            }
+        } catch { };
+        try {
+            if (document.getElementById("literaBtn" + (t + 1).toString() + "," + (y).toString()).childNodes[0].innerHTML !== "") { // w dol
+                sasiedzi++;
+            }
+        } catch { };
+        if (sasiedzi == 0 || sasiedzi > 4) {
+            alert("Litery zostały źle umiejscowiony. Powtorz ruch.");
+            let temp_leng = historiaRuchow.length;
+            for(let x = 0; x<temp_leng; x++){
+                cofnijRuch();
+            }
+            return 0;
+        }
+    }
+}
+
 /*function sprawdzPoprawnosc(){
     let wykluczoneZi = []
     let wykluczoneZj = []
@@ -315,27 +364,27 @@ function parsujPlansze() {
     }
 }*/
 
-$.get('static/slownik.txt',{},function(content){ //jaki adres słownika?
+$.get('static/slownik.txt', {}, function (content) { //jaki adres słownika?
     slowa = content.split('\n');
     //console.log(slowa[3])
 });
 
-function sprawdzPoprawnosc(){
+function sprawdzPoprawnosc() {
     for (let i = 0; i < 11; i++) {
         let liniaI = ''
         for (let j = 0; j < 11; j++) {
-            if ((document.getElementById("literaBtn" + i.toString() + "," + j.toString()).childNodes[0].innerHTML) == ''){
+            if ((document.getElementById("literaBtn" + i.toString() + "," + j.toString()).childNodes[0].innerHTML) == '') {
                 liniaI = liniaI.concat(" ")
             } else {
                 liniaI = liniaI.concat((document.getElementById("literaBtn" + i.toString() + "," + j.toString()).childNodes[0].innerHTML))
             }
         }
         liniaI = liniaI.split(" ")
-        for(let t = 0; t < liniaI.length; t++){
-            if (liniaI[t].length > 1){
+        for (let t = 0; t < liniaI.length; t++) {
+            if (liniaI[t].length > 1) {
                 //console.log(liniaI[t])
                 //kod sprawdzający słownik
-                if (slowa.some((element) => element.substring(0, element.length - 1).valueOf() == liniaI[t].toLowerCase().valueOf())){
+                if (slowa.some((element) => element.substring(0, element.length - 1).valueOf() == liniaI[t].toLowerCase().valueOf())) {
                     //return true
                 } else {
                     //console.log(liniaI[t].toLowerCase())
@@ -347,18 +396,18 @@ function sprawdzPoprawnosc(){
     for (let j = 0; j < 11; j++) {
         let liniaJ = ''
         for (let i = 0; i < 11; i++) {
-            if ((document.getElementById("literaBtn" + i.toString() + "," + j.toString()).childNodes[0].innerHTML) == ''){
+            if ((document.getElementById("literaBtn" + i.toString() + "," + j.toString()).childNodes[0].innerHTML) == '') {
                 liniaJ = liniaJ.concat(" ")
             } else {
                 liniaJ = liniaJ.concat((document.getElementById("literaBtn" + i.toString() + "," + j.toString()).childNodes[0].innerHTML))
             }
         }
         liniaJ = liniaJ.split(" ")
-        for(let t = 0; t < liniaJ.length; t++){
-            if (liniaJ[t].length > 1){
+        for (let t = 0; t < liniaJ.length; t++) {
+            if (liniaJ[t].length > 1) {
                 //console.log(liniaJ[t])
                 //kod sprawdzający słownik
-                if (slowa.some((element) => element.substring(0, element.length - 1).valueOf() == liniaJ[t].toLowerCase().valueOf())){
+                if (slowa.some((element) => element.substring(0, element.length - 1).valueOf() == liniaJ[t].toLowerCase().valueOf())) {
                     //return true
                 } else {
                     //console.log(liniaJ[t].toLowerCase())
@@ -372,7 +421,7 @@ function sprawdzPoprawnosc(){
 
 //obsługa socketow
 $(document).ready(function () {//gdy wczyta cały dokument
-    userName = document.getElementById("userNameinfo").innerHTML.slice(0,-1); //bierze nazwe gracza
+    userName = document.getElementById("userNameinfo").innerHTML.slice(0, -1); //bierze nazwe gracza
     //socket.emit('lista_graczy', userName); //emituje do wydarzenia lista graczy zmienna userName
     socket.on('message', function (data) { //na wydarzenie message wykonuje funkcje ze zmienna data
         let msg, czyjaTuraSerwer; //json data zamieniany na msg- json planszy, czyja tura String
@@ -410,7 +459,7 @@ $(document).ready(function () {//gdy wczyta cały dokument
         //TODO
     });
 
-    socket.on("connect", function(){
+    socket.on("connect", function () {
         socket.emit('dolacz_do_gry', numer, haslo)
         socket.emit('lista_graczy', userName, numer);
         czyjaTura = userName
