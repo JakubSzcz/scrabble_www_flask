@@ -241,7 +241,7 @@ function potwierdzRuch() {
 
 
     //TODO tu funkcja ktora sprawdz na serwerze czy wpisana litera jest poprawna
-    console.log(sprawdzPoprawnosc())
+    //console.log(sprawdzPoprawnosc())
 
 
     for (let i = 0; i < 2; i++) {//losuje nowe litery na koniec tury i zamienia stan na active
@@ -317,7 +317,7 @@ function parsujPlansze() {
 
 $.get('static/slownik.txt',{},function(content){ //jaki adres słownika?
     slowa = content.split('\n');
-    console.log(slowa[3])
+    //console.log(slowa[3])
 });
 
 function sprawdzPoprawnosc(){
@@ -333,7 +333,7 @@ function sprawdzPoprawnosc(){
         liniaI = liniaI.split(" ")
         for(let t = 0; t < liniaI.length; t++){
             if (liniaI[t].length > 1){
-                console.log(liniaI[t])
+                //console.log(liniaI[t])
                 //kod sprawdzający słownik
                 if (slowa.some((element) => element.substring(0, element.length - 1).valueOf() == liniaI[t].toLowerCase().valueOf())){
                     //return true
@@ -356,7 +356,7 @@ function sprawdzPoprawnosc(){
         liniaJ = liniaJ.split(" ")
         for(let t = 0; t < liniaJ.length; t++){
             if (liniaJ[t].length > 1){
-                console.log(liniaJ[t])
+                //console.log(liniaJ[t])
                 //kod sprawdzający słownik
                 if (slowa.some((element) => element.substring(0, element.length - 1).valueOf() == liniaJ[t].toLowerCase().valueOf())){
                     //return true
@@ -413,12 +413,13 @@ $(document).ready(function () {//gdy wczyta cały dokument
     socket.on("connect", function(){
         socket.emit('dolacz_do_gry', numer, haslo)
         socket.emit('lista_graczy', userName, numer);
-        socket.emit('odbierz_plansze', parsujPlansze(), czyjaTura, numer);
+        czyjaTura = userName
+        socket.emit('odbierz_plansze_pierwsze', parsujPlansze(), czyjaTura, numer);
     })
 
     socket.on("odbierz_liste_graczy", function (users) { //odbiera zmienna z lista graczy od serwera na wydarzeniu odbierz_liste_graczy
         listaGraczy = users;
-        console.log("odebrano liste graczy")
+        //console.log("odebrano liste graczy")
         //TODO if lista graczy == 1 nie zaczniesz bo za mało graczy
         let tabelaUserow = document.getElementById("listaUzytkownikow"); //tworze i wypełniam tablice z graczami
         for (let i = 0; i < listaGraczy.length; i++) {

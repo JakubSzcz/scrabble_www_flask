@@ -1,3 +1,4 @@
+from sqlite3 import connect
 import time
 from unicodedata import name
 from website import create_app
@@ -11,6 +12,7 @@ log.disabled = True
 socketio = SocketIO(app, cors_allowed_origins='*')
 users = {} #lista z graczami
 listaGier = {}
+graczZaczynajacy={}
 
 @socketio.on("dolacz_do_gry")
 def dolaczDoGry(numer, haslo):
@@ -33,6 +35,13 @@ def dolaczDoGry(numer, haslo):
 @socketio.on("odbierz_plansze")
 def odbierzPlansze(plansza, czyjaTura, numer):
     data = {"plansza":plansza, "czyjaTura" : czyjaTura}
+    emit("message", data, to=numer)
+
+@socketio.on("odbierz_plansze_pierwsze")
+def odbierzPlansze(plansza, czyjaTura, numer):
+    if numer not in graczZaczynajacy:
+        graczZaczynajacy[numer] = czyjaTura
+    data = {"plansza":plansza, "czyjaTura" : graczZaczynajacy[numer]}
     emit("message", data, to=numer)
 
 @socketio.on("lista_graczy")
