@@ -241,7 +241,7 @@ function potwierdzRuch() {
 
 
     //TODO tu funkcja ktora sprawdz na serwerze czy wpisana litera jest poprawna
-
+    console.log(sprawdzPoprawnosc())
 
 
     for (let i = 0; i < 2; i++) {//losuje nowe litery na koniec tury i zamienia stan na active
@@ -270,7 +270,6 @@ function potwierdzRuch() {
     socket.emit('odbierz_plansze', parsujPlansze(), czyjaTura, numer);
     mojaTura = false; //bo przesłaniu jsona z plansza zmieniam moja ture na false i dezaktywuje plansze
     dezaktywuj_przyciski();
-    sprawdzPoprawnosc();
 }
 
 //funkcja parsuje całą plansze z literami do jsona
@@ -316,7 +315,7 @@ function parsujPlansze() {
     }
 }*/
 
-$.get('/slownik.txt',{},function(content){ //jaki adres słownika?
+$.get('static/slownik.txt',{},function(content){ //jaki adres słownika?
     slowa = content.split('\n');
     console.log(slowa[3])
 });
@@ -336,6 +335,12 @@ function sprawdzPoprawnosc(){
             if (liniaI[t].length > 1){
                 console.log(liniaI[t])
                 //kod sprawdzający słownik
+                if (slowa.some((element) => element.substring(0, element.length - 1).valueOf() == liniaI[t].toLowerCase().valueOf())){
+                    //return true
+                } else {
+                    //console.log(liniaI[t].toLowerCase())
+                    return false
+                }
             }
         }
     }
@@ -353,6 +358,12 @@ function sprawdzPoprawnosc(){
             if (liniaJ[t].length > 1){
                 console.log(liniaJ[t])
                 //kod sprawdzający słownik
+                if (slowa.some((element) => element.substring(0, element.length - 1).valueOf() == liniaJ[t].toLowerCase().valueOf())){
+                    //return true
+                } else {
+                    //console.log(liniaJ[t].toLowerCase())
+                    return false
+                }
             }
         }
     }
