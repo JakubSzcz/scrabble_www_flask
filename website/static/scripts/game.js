@@ -25,7 +25,6 @@ var polaSpecjalne = {
     "0,0": "l2",
     "0,1": "s3",
     "1,1": "l4",
-    "1,0": "z",
     "2,5": "l3",
     "3,5": "l3",
     "4,5": "l3",
@@ -433,17 +432,17 @@ function liczPunkty(historiaRuchow){
     for(let i = 0; i < historiaRuchow.length; i++){
         x = historiaRuchow[i][11]
         y = historiaRuchow[i][9]
-        //console.log(x.toString() + "," + y.toString())
-        if(polaSpecjalne[x.toString() + "," + y.toString()][0].valueOf() == "l"){
-            console.log("premia literowa" + polaSpecjalne[x.toString() + "," + y.toString()][1])
-            sumaPunktow = sumaPunktow + (Number(polaSpecjalne[x.toString() + "," + y.toString()][1]) * literyPunktacja[document.getElementById("literaBtn" + y.toString() + "," + x.toString()).childNodes[0].innerHTML])
-        }
-        if(polaSpecjalne[x.toString() + "," + y.toString()][0].valueOf() == "s"){
-            console.log("premiaSlowna" + polaSpecjalne[x.toString() + "," + y.toString()][1])
-            premiaSlowna = Number(polaSpecjalne[x.toString() + "," + y.toString()][1])
-            sumaPunktow = sumaPunktow + literyPunktacja[document.getElementById("literaBtn" + y.toString() + "," + x.toString()).childNodes[0].innerHTML]
-        }
-        if(polaSpecjalne[x.toString() + "," + y.toString()][0].valueOf() == "z"){
+        if(x.toString() + "," + y.toString() in polaSpecjalne){
+            if(polaSpecjalne[x.toString() + "," + y.toString()][0].valueOf() == "l"){
+                console.log("premia literowa" + polaSpecjalne[x.toString() + "," + y.toString()][1])
+                sumaPunktow = sumaPunktow + (Number(polaSpecjalne[x.toString() + "," + y.toString()][1]) * literyPunktacja[document.getElementById("literaBtn" + y.toString() + "," + x.toString()).childNodes[0].innerHTML])
+            }
+            if(polaSpecjalne[x.toString() + "," + y.toString()][0].valueOf() == "s"){
+                console.log("premiaSlowna" + polaSpecjalne[x.toString() + "," + y.toString()][1])
+                premiaSlowna = Number(polaSpecjalne[x.toString() + "," + y.toString()][1])
+                sumaPunktow = sumaPunktow + literyPunktacja[document.getElementById("literaBtn" + y.toString() + "," + x.toString()).childNodes[0].innerHTML]
+            }
+        } else {
             console.log("brak premii")
             sumaPunktow = sumaPunktow + literyPunktacja[document.getElementById("literaBtn" + y.toString() + "," + x.toString()).childNodes[0].innerHTML]
         }
