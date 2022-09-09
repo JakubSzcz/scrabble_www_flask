@@ -254,10 +254,15 @@ function potwierdzRuch() {
         }
     }
 
-
-    //TODO tu funkcja ktora sprawdz na serwerze czy wpisana litera jest poprawna
-    //console.log(sprawdzPoprawnosc())
-
+    //sprawdzam czy jest w slowniku
+    if(!sprawdzPoprawnosc()){
+        alert("Nie ma takiego słowa!");
+        let temp_leng = historiaRuchow.length;
+        for(let x = 0; x<temp_leng; x++){
+            cofnijRuch();
+        }
+        return 0;
+    }
 
     for (let i = 0; i < 2; i++) {//losuje nowe litery na koniec tury i zamienia stan na active
         for (let j = 0; j < 4; j++) {
@@ -299,6 +304,7 @@ function parsujPlansze() {
     return Object.fromEntries(planszaJson); //zwraca json z danymi planszy id:wartosc literaBtnX,Y: "x"
 }
 
+//sprawdzam czy funkcja o podanych koordynatach ma sasiada
 function czyMaSaiada(t, y){
     let sasiedzi = 0;
     if (document.getElementById("literaBtn" + t.toString() + "," + y.toString()).childNodes[0].innerHTML != "") { // wyszukuje indeksy liter ktore maja wartosc
