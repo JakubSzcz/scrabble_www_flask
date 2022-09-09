@@ -21,6 +21,56 @@ var haslo = numer.substring(
 );
 let slowa = [];
 numer = numer.substring(0, numer.indexOf("?"))
+var polaSpecjalne = {
+    "0,0": "l2",
+    "0,1": "s3",
+    "1,1": "l4",
+    "1,0": "z",
+    "2,5": "l3",
+    "3,5": "l3",
+    "4,5": "l3",
+    "5,5": "l3",
+    "6,5": "l3",
+    "7,5": "l3",
+    "8,5": "l3",
+    "9,5": "l3",
+    "10,5": "l3",
+    //todo
+}
+var literyPunktacja = {
+    "A": 1,
+    "E": 1,
+    "I": 1,
+    "O": 1,
+    "N": 1,
+    "Z": 1,
+    "R": 1,
+    "S": 1,
+    "W": 1,
+    "Y": 2,
+    "C": 2,
+    "D": 2,
+    "K": 2,
+    "L": 2,
+    "M": 2,
+    "P": 2,
+    "T": 2,
+    "B": 3,
+    "G": 3,
+    "H": 3,
+    "J": 3,
+    "Ł": 3,
+    "U": 3,
+    "Ą": 5,
+    "Ę": 5,
+    "F": 5,
+    "Ó": 5,
+    "Ś": 5,
+    "Ż": 5,
+    "Ć": 6,
+    "Ń": 7,
+    "Ź": 9
+}
 
 
 // tworzenie DOM
@@ -274,6 +324,8 @@ function potwierdzRuch() {
         }
     }
 
+    console.log(liczPunkty(historiaRuchow))
+
     //usuwam historie ruchow
     historiaRuchow = [];
     historiaRuchowReka = [];
@@ -374,6 +426,33 @@ $.get('static/slownik.txt', {}, function (content) { //jaki adres słownika?
     slowa = content.split('\n');
     //console.log(slowa[3])
 });
+
+function liczPunkty(historiaRuchow){
+    let sumaPunktow = 0
+    let premiaSlowna = 1
+    for(let i = 0; i < historiaRuchow.length; i++){
+        x = historiaRuchow[i][11]
+        y = historiaRuchow[i][9]
+        //console.log(x.toString() + "," + y.toString())
+        if(polaSpecjalne[x.toString() + "," + y.toString()][0].valueOf() == "l"){
+            console.log("premia literowa" + polaSpecjalne[x.toString() + "," + y.toString()][1])
+            sumaPunktow = sumaPunktow + (Number(polaSpecjalne[x.toString() + "," + y.toString()][1]) * literyPunktacja[document.getElementById("literaBtn" + y.toString() + "," + x.toString()).childNodes[0].innerHTML])
+        }
+        if(polaSpecjalne[x.toString() + "," + y.toString()][0].valueOf() == "s"){
+            console.log("premiaSlowna" + polaSpecjalne[x.toString() + "," + y.toString()][1])
+            premiaSlowna = Number(polaSpecjalne[x.toString() + "," + y.toString()][1])
+            sumaPunktow = sumaPunktow + literyPunktacja[document.getElementById("literaBtn" + y.toString() + "," + x.toString()).childNodes[0].innerHTML]
+        }
+        if(polaSpecjalne[x.toString() + "," + y.toString()][0].valueOf() == "z"){
+            console.log("brak premii")
+            sumaPunktow = sumaPunktow + literyPunktacja[document.getElementById("literaBtn" + y.toString() + "," + x.toString()).childNodes[0].innerHTML]
+        }
+    }
+    if (premiaSlowna){
+        sumaPunktow = sumaPunktow * premiaSlowna
+    }
+    return sumaPunktow
+}
 
 function sprawdzPoprawnosc() {
     for (let i = 0; i < 11; i++) {
