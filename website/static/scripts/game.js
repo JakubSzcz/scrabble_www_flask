@@ -28,7 +28,7 @@ var polaSpecjalne = {
     "2,5": "l3",
     "3,5": "l3",
     "4,5": "l3",
-    "5,5": "l3",
+    //"5,5": "l3",
     "6,5": "l3",
     "7,5": "l3",
     "8,5": "l3",
@@ -70,6 +70,8 @@ var literyPunktacja = {
     "Ń": 7,
     "Ź": 9
 }
+var liczbaPunktow = 0;
+var punktowDoWygranej = 200;
 
 
 // tworzenie DOM
@@ -291,7 +293,7 @@ function potwierdzRuch() {
     if (document.getElementById("literaBtn5,5").childNodes[0].innerHTML == "") {
         alert("Musisz zajać pole startu!");
         let temp_leng = historiaRuchow.length;
-        for(let x = 0; x<temp_leng; x++){
+        for (let x = 0; x < temp_leng; x++) {
             cofnijRuch();
         }
         return 0;
@@ -299,15 +301,15 @@ function potwierdzRuch() {
     //sprawdzam czy dobrze umiejscowiony litery, sprawdzam czy kazda litera ma przynajmniej jednego sasiada
     for (let i = 0; i < 11; i++) {
         for (let j = 0; j < 11; j++) {
-            czyMaSaiada(i,j);
+            czyMaSaiada(i, j);
         }
     }
 
     //sprawdzam czy jest w slowniku
-    if(!sprawdzPoprawnosc()){
+    if (!sprawdzPoprawnosc()) {
         alert("Nie ma takiego słowa!");
         let temp_leng = historiaRuchow.length;
-        for(let x = 0; x<temp_leng; x++){
+        for (let x = 0; x < temp_leng; x++) {
             cofnijRuch();
         }
         return 0;
@@ -323,7 +325,9 @@ function potwierdzRuch() {
         }
     }
 
-    console.log(liczPunkty(historiaRuchow))
+    liczbaPunktow = liczbaPunktow + liczPunkty(historiaRuchow);
+    punktowDoWygranej = punktowDoWygranej - liczPunkty(historiaRuchow);
+
 
     //usuwam historie ruchow
     historiaRuchow = [];
@@ -338,7 +342,7 @@ function potwierdzRuch() {
         }
     }
     //emituje na event odbierz_plansze zmienne parsujPlansze i czyjaTura
-    socket.emit('odbierz_plansze', parsujPlansze(), czyjaTura, numer);
+    socket.emit('odbierz_plansze', parsujPlansze(), czyjaTura, numer, liczbaPunktow, userName, punktowDoWygranej);
     mojaTura = false; //bo przesłaniu jsona z plansza zmieniam moja ture na false i dezaktywuje plansze
     dezaktywuj_przyciski();
 }
@@ -356,7 +360,7 @@ function parsujPlansze() {
 }
 
 //sprawdzam czy funkcja o podanych koordynatach ma sasiada
-function czyMaSaiada(t, y){
+function czyMaSaiada(t, y) {
     let sasiedzi = 0;
     if (document.getElementById("literaBtn" + t.toString() + "," + y.toString()).childNodes[0].innerHTML != "") { // wyszukuje indeksy liter ktore maja wartosc
         try {
@@ -382,7 +386,7 @@ function czyMaSaiada(t, y){
         if (sasiedzi == 0 || sasiedzi > 4) {
             alert("Litery zostały źle umiejscowiony. Powtorz ruch.");
             let temp_leng = historiaRuchow.length;
-            for(let x = 0; x<temp_leng; x++){
+            for (let x = 0; x < temp_leng; x++) {
                 cofnijRuch();
             }
             return 0;
@@ -426,18 +430,18 @@ $.get('static/slownik.txt', {}, function (content) { //jaki adres słownika?
     //console.log(slowa[3])
 });
 
-function liczPunkty(historiaRuchow){
+function liczPunkty(historiaRuchow) {
     let sumaPunktow = 0
     let premiaSlowna = 1
-    for(let i = 0; i < historiaRuchow.length; i++){
+    for (let i = 0; i < historiaRuchow.length; i++) {
         x = historiaRuchow[i][11]
         y = historiaRuchow[i][9]
-        if(x.toString() + "," + y.toString() in polaSpecjalne){
-            if(polaSpecjalne[x.toString() + "," + y.toString()][0].valueOf() == "l"){
+        if (x.toString() + "," + y.toString() in polaSpecjalne) {
+            if (polaSpecjalne[x.toString() + "," + y.toString()][0].valueOf() == "l") {
                 console.log("premia literowa" + polaSpecjalne[x.toString() + "," + y.toString()][1])
                 sumaPunktow = sumaPunktow + (Number(polaSpecjalne[x.toString() + "," + y.toString()][1]) * literyPunktacja[document.getElementById("literaBtn" + y.toString() + "," + x.toString()).childNodes[0].innerHTML])
             }
-            if(polaSpecjalne[x.toString() + "," + y.toString()][0].valueOf() == "s"){
+            if (polaSpecjalne[x.toString() + "," + y.toString()][0].valueOf() == "s") {
                 console.log("premiaSlowna" + polaSpecjalne[x.toString() + "," + y.toString()][1])
                 premiaSlowna = Number(polaSpecjalne[x.toString() + "," + y.toString()][1])
                 sumaPunktow = sumaPunktow + literyPunktacja[document.getElementById("literaBtn" + y.toString() + "," + x.toString()).childNodes[0].innerHTML]
@@ -447,7 +451,7 @@ function liczPunkty(historiaRuchow){
             sumaPunktow = sumaPunktow + literyPunktacja[document.getElementById("literaBtn" + y.toString() + "," + x.toString()).childNodes[0].innerHTML]
         }
     }
-    if (premiaSlowna){
+    if (premiaSlowna) {
         sumaPunktow = sumaPunktow * premiaSlowna
     }
     return sumaPunktow
@@ -508,9 +512,12 @@ $(document).ready(function () {//gdy wczyta cały dokument
     userName = document.getElementById("userNameinfo").innerHTML.slice(0, -1); //bierze nazwe gracza
     //socket.emit('lista_graczy', userName); //emituje do wydarzenia lista graczy zmienna userName
     socket.on('message', function (data) { //na wydarzenie message wykonuje funkcje ze zmienna data
-        let msg, czyjaTuraSerwer; //json data zamieniany na msg- json planszy, czyja tura String
+        let msg, czyjaTuraSerwer, punktyWyswietl, graczSerwer, doWygranej; //json data zamieniany na msg- json planszy, czyja tura String
         msg = data["plansza"];
         czyjaTuraSerwer = data["czyjaTura"];
+        punktyWyswietl = data["liczbaPunktow"];
+        graczSerwer = data["gracz"];
+        doWygranej = data["doWygranej"]
         for (let i = 0; i < 11; i++) { //wypelnia plansze wartosciami z jsona, jesli nie ma wartosci daje ""
             for (let j = 0; j < 11; j++) {
                 let temp_name = "literaBtn" + i.toString() + "," + j.toString();
@@ -537,6 +544,12 @@ $(document).ready(function () {//gdy wczyta cały dokument
         } else {
             document.getElementById("czyjaTuraInfo").innerHTML = "Akutalnie ruch wykonuje " + "<b>" + czyjaTuraSerwer + "</b>";
         }
+
+        var indeksGracza = listaGraczy.indexOf(graczSerwer).toString();
+        try {
+            document.getElementById("wynikGracza" + indeksGracza).innerHTML = punktyWyswietl.toString();
+            document.getElementById("roznicaGracza" + indeksGracza).innerHTML = doWygranej.toString();
+        } catch { }
     });
 
     $('#pominTureBtn').on('click', function () {
@@ -565,7 +578,7 @@ $(document).ready(function () {//gdy wczyta cały dokument
                 roznicaGracza.setAttribute("id", "roznicaGracza" + i.toString());
                 nazwaGracza.innerHTML = listaGraczy[i];
                 punktyGracza.innerHTML = "0";
-                roznicaGracza.innerHTML = "0";
+                roznicaGracza.innerHTML = punktowDoWygranej.toString();
                 temp_row.appendChild(nazwaGracza);
                 temp_row.appendChild(punktyGracza);
                 temp_row.appendChild(roznicaGracza);

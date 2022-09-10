@@ -1,5 +1,6 @@
 from sqlite3 import connect
 import time
+from turtle import pu
 from unicodedata import name
 from website import create_app
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
@@ -13,6 +14,7 @@ socketio = SocketIO(app, cors_allowed_origins='*')
 users = {} #lista z graczami
 listaGier = {}
 graczZaczynajacy={}
+punktyGraczy = {}
 
 @socketio.on("dolacz_do_gry")
 def dolaczDoGry(numer, haslo):
@@ -33,8 +35,8 @@ def dolaczDoGry(numer, haslo):
             return
 
 @socketio.on("odbierz_plansze")
-def odbierzPlansze(plansza, czyjaTura, numer):
-    data = {"plansza":plansza, "czyjaTura" : czyjaTura}
+def odbierzPlansze(plansza, czyjaTura, numer, liczbaPunktow, gracz, doWygranej):
+    data = {"plansza":plansza, "czyjaTura" : czyjaTura, "liczbaPunktow": liczbaPunktow, "gracz": gracz, "doWygranej": doWygranej}
     emit("message", data, to=numer)
 
 @socketio.on("odbierz_plansze_pierwsze")
