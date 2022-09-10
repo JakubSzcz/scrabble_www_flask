@@ -334,9 +334,9 @@ function potwierdzRuch() {
             }
         }
     }
-
-    liczbaPunktow = liczbaPunktow + liczPunkty(historiaRuchow);
-    punktowDoWygranej = punktowDoWygranej - liczPunkty(historiaRuchow);
+    let nowePunkty = liczPunkty(historiaRuchow);
+    liczbaPunktow = liczbaPunktow + nowePunkty
+    punktowDoWygranej = punktowDoWygranej - nowePunkty;
 
 
     //usuwam historie ruchow
