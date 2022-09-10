@@ -27,8 +27,10 @@ var polaSpecjalne = {
     "1,1": "l4",
     "2,5": "l3",
     "3,5": "l3",
-    "4,5": "l3",
-    "5,5": "l3",
+    "4,4": "s2",
+    "4,5": "s2",
+    "5,5": "s3",
+    "5,4": "s4",
     "6,5": "l3",
     "7,5": "l3",
     "8,5": "l3",
@@ -299,7 +301,15 @@ function potwierdzRuch() {
     //sprawdzam czy dobrze umiejscowiony litery, sprawdzam czy kazda litera ma przynajmniej jednego sasiada
     for (let i = 0; i < 11; i++) {
         for (let j = 0; j < 11; j++) {
-            czyMaSaiada(i,j);
+            let sasiedzi = czyMaSaiada(i,j)[0].length;
+            if ((sasiedzi == 0 || sasiedzi > 4) && (document.getElementById("literaBtn" + i.toString() + "," + j.toString()).childNodes[0].innerHTML != "")) {
+                alert("Litery zostały źle umiejscowiony. Powtorz ruch.");
+                let temp_leng = historiaRuchow.length;
+                for(let x = 0; x<temp_leng; x++){
+                    cofnijRuch();
+                }
+                return 0;
+            }
         }
     }
 
@@ -357,37 +367,36 @@ function parsujPlansze() {
 
 //sprawdzam czy funkcja o podanych koordynatach ma sasiada
 function czyMaSaiada(t, y){
-    let sasiedzi = 0;
+    let sasiedzi = []
+    let kierunki = []
     if (document.getElementById("literaBtn" + t.toString() + "," + y.toString()).childNodes[0].innerHTML != "") { // wyszukuje indeksy liter ktore maja wartosc
         try {
-            if (document.getElementById("literaBtn" + (t).toString() + "," + (y + 1).toString()).childNodes[0].innerHTML !== "") { //w prawo
-                sasiedzi++;
+            if (document.getElementById("literaBtn" + (t).toString() + "," + (y + 1).toString()).childNodes[0].innerHTML != "") { //w prawo
+                sasiedzi = sasiedzi.concat("literaBtn" + (t).toString() + "," + (y + 1).toString())
+                kierunki = kierunki.concat("p")
             }
         } catch { };
         try {
-            if (document.getElementById("literaBtn" + (t).toString() + "," + (y - 1).toString()).childNodes[0].innerHTML !== "") { // w lewo
-                sasiedzi++;
+            if (document.getElementById("literaBtn" + (t).toString() + "," + (y - 1).toString()).childNodes[0].innerHTML != "") { // w lewo
+                sasiedzi = sasiedzi.concat("literaBtn" + (t).toString() + "," + (y - 1).toString())
+                kierunki = kierunki.concat("l")
             }
         } catch { };
         try {
-            if (document.getElementById("literaBtn" + (t - 1).toString() + "," + (y).toString()).childNodes[0].innerHTML !== "") { // w gore
-                sasiedzi++;
+            if (document.getElementById("literaBtn" + (t - 1).toString() + "," + (y).toString()).childNodes[0].innerHTML != "") { // w gore
+                sasiedzi = sasiedzi.concat("literaBtn" + (t-1).toString() + "," + (y).toString())
+                kierunki = kierunki.concat("g")
             }
         } catch { };
         try {
-            if (document.getElementById("literaBtn" + (t + 1).toString() + "," + (y).toString()).childNodes[0].innerHTML !== "") { // w dol
-                sasiedzi++;
+            if (document.getElementById("literaBtn" + (t + 1).toString() + "," + (y).toString()).childNodes[0].innerHTML != "") { // w dol
+                sasiedzi = sasiedzi.concat("literaBtn" + (t + 1).toString() + "," + (y).toString())
+                kierunki = kierunki.concat("d")
+                //console.log("dziala w dol")
             }
         } catch { };
-        if (sasiedzi == 0 || sasiedzi > 4) {
-            alert("Litery zostały źle umiejscowiony. Powtorz ruch.");
-            let temp_leng = historiaRuchow.length;
-            for(let x = 0; x<temp_leng; x++){
-                cofnijRuch();
-            }
-            return 0;
-        }
     }
+    return [sasiedzi, kierunki]
 }
 
 /*function sprawdzPoprawnosc(){
@@ -427,20 +436,56 @@ $.get('static/slownik.txt', {}, function (content) { //jaki adres słownika?
 });
 
 function liczPunkty(historiaRuchow){
+    let kostkiDoPoliczenia = []
+    for(let i = 0; i < historiaRuchow.length; i++){
+        x = Number(historiaRuchow[i][11])
+        y = Number(historiaRuchow[i][9])
+        kierunki = []
+        nowiSasiedzi = []
+        for(let i = 0; i < czyMaSaiada(y, x)[0].length; i++){ //dodaję sąsiadów dookoła dodanej płytki
+            if(!(historiaRuchow.includes(czyMaSaiada(y, x)[0][i].valueOf()) || nowiSasiedzi.includes(czyMaSaiada(y, x)[0][i].valueOf()))){
+                nowiSasiedzi = nowiSasiedzi.concat(czyMaSaiada(y, x)[0][i].valueOf())
+                kierunki = kierunki.concat(czyMaSaiada(y, x)[1][i])
+                //console.log("dodano nowego sasiada")
+                //historiaRuchow = tempHistoriaRuchow.concat(czyMaSaiada(y, x)[i].valueOf())
+            }
+        }
+        for(let i = 0; i < nowiSasiedzi.length; i++){ //dodaję sąsiadów nowododanych sąsiadów lężących w danym kierunku
+            x = Number(nowiSasiedzi[i][11])
+            y = Number(nowiSasiedzi[i][9])
+            //console.log(czyMaSaiada(y, x)[1])
+            //console.log(kierunki[i].valueOf())
+            if(czyMaSaiada(y, x)[1].includes(kierunki[i].valueOf())){
+                if(!(historiaRuchow.includes(czyMaSaiada(y, x)[0][czyMaSaiada(y, x)[1].indexOf(kierunki[i].valueOf())]) || nowiSasiedzi.includes(czyMaSaiada(y, x)[0][czyMaSaiada(y, x)[1].indexOf(kierunki[i].valueOf())]))){
+                    nowiSasiedzi = nowiSasiedzi.concat(czyMaSaiada(y, x)[0][czyMaSaiada(y, x)[1].indexOf(kierunki[i].valueOf())])
+                    kierunki = kierunki.concat(kierunki[i].valueOf())
+                    //console.log("dodano nowego sasiada")
+                }
+            }
+            
+        }
+        kostkiDoPoliczenia = Array.from(new Set(kostkiDoPoliczenia.concat(nowiSasiedzi)))
+    }
+    kostkiDoPoliczenia = Array.from(new Set(kostkiDoPoliczenia.concat(historiaRuchow)))
+    //console.log(kostkiDoPoliczenia)
     let sumaPunktow = 0
     let premiaSlowna = 1
-    for(let i = 0; i < historiaRuchow.length; i++){
-        x = historiaRuchow[i][11]
-        y = historiaRuchow[i][9]
+    for(let i = 0; i < kostkiDoPoliczenia.length; i++){
+        x = kostkiDoPoliczenia[i][11]
+        y = kostkiDoPoliczenia[i][9]
         if(x.toString() + "," + y.toString() in polaSpecjalne){
             if(polaSpecjalne[x.toString() + "," + y.toString()][0].valueOf() == "l"){
                 console.log("premia literowa" + polaSpecjalne[x.toString() + "," + y.toString()][1])
+                //console.log(polaSpecjalne[x.toString() + "," + y.toString()][1])
                 sumaPunktow = sumaPunktow + (Number(polaSpecjalne[x.toString() + "," + y.toString()][1]) * literyPunktacja[document.getElementById("literaBtn" + y.toString() + "," + x.toString()).childNodes[0].innerHTML])
+                polaSpecjalne[x.toString() + "," + y.toString()] = polaSpecjalne[x.toString() + "," + y.toString()][0] + "1"
             }
             if(polaSpecjalne[x.toString() + "," + y.toString()][0].valueOf() == "s"){
                 console.log("premiaSlowna" + polaSpecjalne[x.toString() + "," + y.toString()][1])
-                premiaSlowna = Number(polaSpecjalne[x.toString() + "," + y.toString()][1])
+                premiaSlowna = premiaSlowna * Number(polaSpecjalne[x.toString() + "," + y.toString()][1])
+                //console.log(polaSpecjalne[x.toString() + "," + y.toString()])
                 sumaPunktow = sumaPunktow + literyPunktacja[document.getElementById("literaBtn" + y.toString() + "," + x.toString()).childNodes[0].innerHTML]
+                polaSpecjalne[x.toString() + "," + y.toString()] = polaSpecjalne[x.toString() + "," + y.toString()][0] + "1"
             }
         } else {
             console.log("brak premii")
@@ -449,6 +494,7 @@ function liczPunkty(historiaRuchow){
     }
     if (premiaSlowna){
         sumaPunktow = sumaPunktow * premiaSlowna
+        console.log("całkowita premia slowna:" + premiaSlowna.toString())
     }
     return sumaPunktow
 }
