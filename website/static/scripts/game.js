@@ -72,6 +72,8 @@ var literyPunktacja = {
     "Ń": 7,
     "Ź": 9
 }
+var liczbaPunktow = 0;
+var punktowDoWygranej = 200;
 
 
 // tworzenie DOM
@@ -293,7 +295,7 @@ function potwierdzRuch() {
     if (document.getElementById("literaBtn5,5").childNodes[0].innerHTML == "") {
         alert("Musisz zajać pole startu!");
         let temp_leng = historiaRuchow.length;
-        for(let x = 0; x<temp_leng; x++){
+        for (let x = 0; x < temp_leng; x++) {
             cofnijRuch();
         }
         return 0;
@@ -314,10 +316,10 @@ function potwierdzRuch() {
     }
 
     //sprawdzam czy jest w slowniku
-    if(!sprawdzPoprawnosc()){
+    if (!sprawdzPoprawnosc()) {
         alert("Nie ma takiego słowa!");
         let temp_leng = historiaRuchow.length;
-        for(let x = 0; x<temp_leng; x++){
+        for (let x = 0; x < temp_leng; x++) {
             cofnijRuch();
         }
         return 0;
@@ -333,7 +335,9 @@ function potwierdzRuch() {
         }
     }
 
-    console.log(liczPunkty(historiaRuchow))
+    liczbaPunktow = liczbaPunktow + liczPunkty(historiaRuchow);
+    punktowDoWygranej = punktowDoWygranej - liczPunkty(historiaRuchow);
+
 
     //usuwam historie ruchow
     historiaRuchow = [];
@@ -348,7 +352,7 @@ function potwierdzRuch() {
         }
     }
     //emituje na event odbierz_plansze zmienne parsujPlansze i czyjaTura
-    socket.emit('odbierz_plansze', parsujPlansze(), czyjaTura, numer);
+    socket.emit('odbierz_plansze', parsujPlansze(), czyjaTura, numer, liczbaPunktow, userName, punktowDoWygranej);
     mojaTura = false; //bo przesłaniu jsona z plansza zmieniam moja ture na false i dezaktywuje plansze
     dezaktywuj_przyciski();
 }
@@ -480,7 +484,7 @@ function liczPunkty(historiaRuchow){
                 sumaPunktow = sumaPunktow + (Number(polaSpecjalne[x.toString() + "," + y.toString()][1]) * literyPunktacja[document.getElementById("literaBtn" + y.toString() + "," + x.toString()).childNodes[0].innerHTML])
                 polaSpecjalne[x.toString() + "," + y.toString()] = polaSpecjalne[x.toString() + "," + y.toString()][0] + "1"
             }
-            if(polaSpecjalne[x.toString() + "," + y.toString()][0].valueOf() == "s"){
+            if (polaSpecjalne[x.toString() + "," + y.toString()][0].valueOf() == "s") {
                 console.log("premiaSlowna" + polaSpecjalne[x.toString() + "," + y.toString()][1])
                 premiaSlowna = premiaSlowna * Number(polaSpecjalne[x.toString() + "," + y.toString()][1])
                 //console.log(polaSpecjalne[x.toString() + "," + y.toString()])
@@ -492,7 +496,7 @@ function liczPunkty(historiaRuchow){
             sumaPunktow = sumaPunktow + literyPunktacja[document.getElementById("literaBtn" + y.toString() + "," + x.toString()).childNodes[0].innerHTML]
         }
     }
-    if (premiaSlowna){
+    if (premiaSlowna) {
         sumaPunktow = sumaPunktow * premiaSlowna
         console.log("całkowita premia slowna:" + premiaSlowna.toString())
     }
@@ -554,9 +558,12 @@ $(document).ready(function () {//gdy wczyta cały dokument
     userName = document.getElementById("userNameinfo").innerHTML.slice(0, -1); //bierze nazwe gracza
     //socket.emit('lista_graczy', userName); //emituje do wydarzenia lista graczy zmienna userName
     socket.on('message', function (data) { //na wydarzenie message wykonuje funkcje ze zmienna data
-        let msg, czyjaTuraSerwer; //json data zamieniany na msg- json planszy, czyja tura String
+        let msg, czyjaTuraSerwer, punktyWyswietl, graczSerwer, doWygranej; //json data zamieniany na msg- json planszy, czyja tura String
         msg = data["plansza"];
         czyjaTuraSerwer = data["czyjaTura"];
+        punktyWyswietl = data["liczbaPunktow"];
+        graczSerwer = data["gracz"];
+        doWygranej = data["doWygranej"]
         for (let i = 0; i < 11; i++) { //wypelnia plansze wartosciami z jsona, jesli nie ma wartosci daje ""
             for (let j = 0; j < 11; j++) {
                 let temp_name = "literaBtn" + i.toString() + "," + j.toString();
@@ -583,6 +590,12 @@ $(document).ready(function () {//gdy wczyta cały dokument
         } else {
             document.getElementById("czyjaTuraInfo").innerHTML = "Akutalnie ruch wykonuje " + "<b>" + czyjaTuraSerwer + "</b>";
         }
+
+        var indeksGracza = listaGraczy.indexOf(graczSerwer).toString();
+        try {
+            document.getElementById("wynikGracza" + indeksGracza).innerHTML = punktyWyswietl.toString();
+            document.getElementById("roznicaGracza" + indeksGracza).innerHTML = doWygranej.toString();
+        } catch { }
     });
 
     $('#pominTureBtn').on('click', function () {
@@ -611,7 +624,7 @@ $(document).ready(function () {//gdy wczyta cały dokument
                 roznicaGracza.setAttribute("id", "roznicaGracza" + i.toString());
                 nazwaGracza.innerHTML = listaGraczy[i];
                 punktyGracza.innerHTML = "0";
-                roznicaGracza.innerHTML = "0";
+                roznicaGracza.innerHTML = punktowDoWygranej.toString();
                 temp_row.appendChild(nazwaGracza);
                 temp_row.appendChild(punktyGracza);
                 temp_row.appendChild(roznicaGracza);
