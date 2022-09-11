@@ -18,4 +18,5 @@ class Game(db.Model):
     score = db.Column(db.String(20))
     plansza = db.Column(db.String())
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    #players = db.Column(db.) //todo
     #game.user.first_name-nazwa

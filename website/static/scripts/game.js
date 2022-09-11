@@ -337,6 +337,9 @@ function potwierdzRuch() {
     let nowePunkty = liczPunkty(historiaRuchow);
     liczbaPunktow = liczbaPunktow + nowePunkty
     punktowDoWygranej = punktowDoWygranej - nowePunkty;
+    if(punktowDoWygranej <= 0){
+        zakonczGre(czyjaTura)
+    }
 
 
     //usuwam historie ruchow
@@ -367,6 +370,11 @@ function parsujPlansze() {
         }
     }
     return Object.fromEntries(planszaJson); //zwraca json z danymi planszy id:wartosc literaBtnX,Y: "x"
+}
+
+function zakonczGre(ktoWygral){
+    socket.emit('koniec_gry', parsujPlansze(), liczbaPunktow, ktoWygral, listaGraczy)
+    // todo okienko dialogowe końca gry
 }
 
 //sprawdzam czy funkcja o podanych koordynatach ma sasiada

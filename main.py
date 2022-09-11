@@ -6,6 +6,9 @@ from website import create_app
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
 from flask import redirect, url_for, render_template
 import logging
+from website.models import User, Game
+from website import db
+from datetime import datetime
 
 app = create_app()
 log = logging.getLogger('werkzeug')
@@ -14,7 +17,7 @@ socketio = SocketIO(app, cors_allowed_origins='*')
 users = {} #lista z graczami
 listaGier = {}
 graczZaczynajacy={}
-punktyGraczy = {}
+#punktyGraczy = {}
 
 @socketio.on("dolacz_do_gry")
 def dolaczDoGry(numer, haslo):
@@ -62,6 +65,14 @@ def lista_graczy(userName, numer):
             users[numer].append(userName)
     emit("odbierz_liste_graczy", users[numer], to=numer)
     print("wysłano liste graczy do pokoju: " + numer)
+
+@socketio.on("koniec_gry")
+def koniecGry(plansza, liczbaPunktow, ktoWygral, listaGraczy, numer):
+    gra = Game(winner = ktoWygral, time = datetime.now().strftime("%d/%m/%Y %H:%M:%S"), score = liczbaPunktow, board = plansza, users = listaGraczy)
+    # todo dodanie do db
+    del users[numer]
+    del listaGier[numer]
+    del graczZaczynajacy[numer]
 
 
 
