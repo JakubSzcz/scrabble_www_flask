@@ -67,12 +67,20 @@ def lista_graczy(userName, numer):
     print("wysłano liste graczy do pokoju: " + numer)
 
 @socketio.on("koniec_gry")
-def koniecGry(plansza, liczbaPunktow, ktoWygral, listaGraczy, numer):
-    gra = Game(winner = ktoWygral, time = datetime.now().strftime("%d/%m/%Y %H:%M:%S"), score = liczbaPunktow, board = plansza, users = listaGraczy)
-    # todo dodanie do db
+def koniecGry(liczbaPunktow, ktoWygral, numer):
+    for user in users[numer]:
+        user_form_db = User.query.filter_by(first_name=user).first()
+        gra = Game(winner = ktoWygral, time = datetime.now().strftime("%d/%m/%Y %H:%M:%S"), score = liczbaPunktow[user], user = user_form_db )
+        db.session.add(gra)
+        db.session.commit()
     del users[numer]
     del listaGier[numer]
     del graczZaczynajacy[numer]
+
+@socketio.on("poinformuj_o_wygranej")
+def poinformujOWygranej(ktoWygral,numer):
+    print("siema")
+    emit("informuje_o_wygrnej",ktoWygral, to=numer)
 
 
 

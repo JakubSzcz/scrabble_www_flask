@@ -74,6 +74,7 @@ var literyPunktacja = {
 }
 var liczbaPunktow = 0;
 var punktowDoWygranej = 200;
+var wygralem = false;
 
 
 // tworzenie DOM
@@ -303,11 +304,11 @@ function potwierdzRuch() {
     //sprawdzam czy dobrze umiejscowiony litery, sprawdzam czy kazda litera ma przynajmniej jednego sasiada
     for (let i = 0; i < 11; i++) {
         for (let j = 0; j < 11; j++) {
-            let sasiedzi = czyMaSaiada(i,j)[0].length;
+            let sasiedzi = czyMaSaiada(i, j)[0].length;
             if ((sasiedzi == 0 || sasiedzi > 4) && (document.getElementById("literaBtn" + i.toString() + "," + j.toString()).childNodes[0].innerHTML != "")) {
                 alert("Litery zostały źle umiejscowiony. Powtorz ruch.");
                 let temp_leng = historiaRuchow.length;
-                for(let x = 0; x<temp_leng; x++){
+                for (let x = 0; x < temp_leng; x++) {
                     cofnijRuch();
                 }
                 return 0;
@@ -337,8 +338,10 @@ function potwierdzRuch() {
     let nowePunkty = liczPunkty(historiaRuchow);
     liczbaPunktow = liczbaPunktow + nowePunkty
     punktowDoWygranej = punktowDoWygranej - nowePunkty;
-    if(punktowDoWygranej <= 0){
-        zakonczGre(czyjaTura)
+    if (punktowDoWygranej <= 0) {
+        wygralem = true;
+        zakonczGre(czyjaTura);
+        return 0;
     }
 
 
@@ -372,13 +375,20 @@ function parsujPlansze() {
     return Object.fromEntries(planszaJson); //zwraca json z danymi planszy id:wartosc literaBtnX,Y: "x"
 }
 
-function zakonczGre(ktoWygral){
-    socket.emit('koniec_gry', parsujPlansze(), liczbaPunktow, ktoWygral, listaGraczy)
-    // todo okienko dialogowe końca gry
+function zakonczGre(ktoWygral) {
+    let doWyslaniaPunktow = {};
+    for(let user of listaGraczy){
+        let indeksGracza = listaGraczy.indexOf(user).toString();
+        let temp = document.getElementById("wynikGracza"+ indeksGracza).innerHTML;
+        doWyslaniaPunktow[user] = temp;
+    }
+    socket.emit('koniec_gry', doWyslaniaPunktow, ktoWygral, numer)
+    socket.emit('poinformuj_o_wygranej', ktoWygral, numer);
+    alert("Gratulacje, wygrałeś!");
 }
 
 //sprawdzam czy funkcja o podanych koordynatach ma sasiada
-function czyMaSaiada(t, y){
+function czyMaSaiada(t, y) {
     let sasiedzi = []
     let kierunki = []
     if (document.getElementById("literaBtn" + t.toString() + "," + y.toString()).childNodes[0].innerHTML != "") { // wyszukuje indeksy liter ktore maja wartosc
@@ -396,7 +406,7 @@ function czyMaSaiada(t, y){
         } catch { };
         try {
             if (document.getElementById("literaBtn" + (t - 1).toString() + "," + (y).toString()).childNodes[0].innerHTML != "") { // w gore
-                sasiedzi = sasiedzi.concat("literaBtn" + (t-1).toString() + "," + (y).toString())
+                sasiedzi = sasiedzi.concat("literaBtn" + (t - 1).toString() + "," + (y).toString())
                 kierunki = kierunki.concat("g")
             }
         } catch { };
@@ -447,34 +457,34 @@ $.get('static/slownik.txt', {}, function (content) { //jaki adres słownika?
     //console.log(slowa[3])
 });
 
-function liczPunkty(historiaRuchow){
+function liczPunkty(historiaRuchow) {
     let kostkiDoPoliczenia = []
-    for(let i = 0; i < historiaRuchow.length; i++){
+    for (let i = 0; i < historiaRuchow.length; i++) {
         x = Number(historiaRuchow[i][11])
         y = Number(historiaRuchow[i][9])
         kierunki = []
         nowiSasiedzi = []
-        for(let i = 0; i < czyMaSaiada(y, x)[0].length; i++){ //dodaję sąsiadów dookoła dodanej płytki
-            if(!(historiaRuchow.includes(czyMaSaiada(y, x)[0][i].valueOf()) || nowiSasiedzi.includes(czyMaSaiada(y, x)[0][i].valueOf()))){
+        for (let i = 0; i < czyMaSaiada(y, x)[0].length; i++) { //dodaję sąsiadów dookoła dodanej płytki
+            if (!(historiaRuchow.includes(czyMaSaiada(y, x)[0][i].valueOf()) || nowiSasiedzi.includes(czyMaSaiada(y, x)[0][i].valueOf()))) {
                 nowiSasiedzi = nowiSasiedzi.concat(czyMaSaiada(y, x)[0][i].valueOf())
                 kierunki = kierunki.concat(czyMaSaiada(y, x)[1][i])
                 //console.log("dodano nowego sasiada")
                 //historiaRuchow = tempHistoriaRuchow.concat(czyMaSaiada(y, x)[i].valueOf())
             }
         }
-        for(let i = 0; i < nowiSasiedzi.length; i++){ //dodaję sąsiadów nowododanych sąsiadów lężących w danym kierunku
+        for (let i = 0; i < nowiSasiedzi.length; i++) { //dodaję sąsiadów nowododanych sąsiadów lężących w danym kierunku
             x = Number(nowiSasiedzi[i][11])
             y = Number(nowiSasiedzi[i][9])
             //console.log(czyMaSaiada(y, x)[1])
             //console.log(kierunki[i].valueOf())
-            if(czyMaSaiada(y, x)[1].includes(kierunki[i].valueOf())){
-                if(!(historiaRuchow.includes(czyMaSaiada(y, x)[0][czyMaSaiada(y, x)[1].indexOf(kierunki[i].valueOf())]) || nowiSasiedzi.includes(czyMaSaiada(y, x)[0][czyMaSaiada(y, x)[1].indexOf(kierunki[i].valueOf())]))){
+            if (czyMaSaiada(y, x)[1].includes(kierunki[i].valueOf())) {
+                if (!(historiaRuchow.includes(czyMaSaiada(y, x)[0][czyMaSaiada(y, x)[1].indexOf(kierunki[i].valueOf())]) || nowiSasiedzi.includes(czyMaSaiada(y, x)[0][czyMaSaiada(y, x)[1].indexOf(kierunki[i].valueOf())]))) {
                     nowiSasiedzi = nowiSasiedzi.concat(czyMaSaiada(y, x)[0][czyMaSaiada(y, x)[1].indexOf(kierunki[i].valueOf())])
                     kierunki = kierunki.concat(kierunki[i].valueOf())
                     //console.log("dodano nowego sasiada")
                 }
             }
-            
+
         }
         kostkiDoPoliczenia = Array.from(new Set(kostkiDoPoliczenia.concat(nowiSasiedzi)))
     }
@@ -482,11 +492,11 @@ function liczPunkty(historiaRuchow){
     //console.log(kostkiDoPoliczenia)
     let sumaPunktow = 0
     let premiaSlowna = 1
-    for(let i = 0; i < kostkiDoPoliczenia.length; i++){
+    for (let i = 0; i < kostkiDoPoliczenia.length; i++) {
         x = kostkiDoPoliczenia[i][11]
         y = kostkiDoPoliczenia[i][9]
-        if(x.toString() + "," + y.toString() in polaSpecjalne){
-            if(polaSpecjalne[x.toString() + "," + y.toString()][0].valueOf() == "l"){
+        if (x.toString() + "," + y.toString() in polaSpecjalne) {
+            if (polaSpecjalne[x.toString() + "," + y.toString()][0].valueOf() == "l") {
                 console.log("premia literowa" + polaSpecjalne[x.toString() + "," + y.toString()][1])
                 //console.log(polaSpecjalne[x.toString() + "," + y.toString()][1])
                 sumaPunktow = sumaPunktow + (Number(polaSpecjalne[x.toString() + "," + y.toString()][1]) * literyPunktacja[document.getElementById("literaBtn" + y.toString() + "," + x.toString()).childNodes[0].innerHTML])
@@ -626,6 +636,7 @@ $(document).ready(function () {//gdy wczyta cały dokument
             if (tabelaUserow.rows.length != listaGraczy.length) {
                 let temp_row = document.createElement("tr");
                 let nazwaGracza = document.createElement("td");
+                nazwaGracza.setAttribute("id", "nazwaGracza" + i.toString());
                 let punktyGracza = document.createElement("td");
                 punktyGracza.setAttribute("id", "wynikGracza" + i.toString());
                 let roznicaGracza = document.createElement("td");
@@ -650,4 +661,11 @@ $(document).ready(function () {//gdy wczyta cały dokument
         }
     });
     document.getElementById("numerInfo").innerHTML = numer;
+
+    socket.on("informuje_o_wygrnej", function (ktoWygral) {
+        if (!wygralem) {
+            console.log("test1")
+            alert("Wygrał gracz: " + ktoWygral + ". Powodzenia nastepnym razem!");
+        }
+    });
 });
