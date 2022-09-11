@@ -19,20 +19,26 @@ punktyGraczy = {}
 @socketio.on("dolacz_do_gry")
 def dolaczDoGry(numer, haslo):
     if numer not in listaGier:
-        print("dodano pokoj:" + numer)
-        listaGier[numer] = haslo #tworze pokoj
-        join_room(numer)
-        data = {"numer":numer,"haslo":haslo}
-        emit("redirect_to_game")
+        emit("nie_ma_takiego_pokoju")
     else: # dołączam do już istniejącego pokoju
         if listaGier[numer] == haslo:
-            print("dolaczono do pokoju:" + numer)
+            print("dolaczono do pokoju: " + numer)
             join_room(numer)
-            emit("redirect_to_game")
+            emit("redirect_to_game1")
         else:
-            print("złe haslo do pokoju:" + numer)
-            #złe hasło
+            print("złe haslo do pokoju: " + numer)
+            emit("zle_haslo_do_gry")
             return
+
+@socketio.on("stworz_gre")
+def stworzGre(numer, haslo):
+    if numer not in listaGier:
+        print("dodano pokoj: " + numer)
+        listaGier[numer] = haslo #tworze pokoj
+        join_room(numer)
+        emit("redirect_to_game")
+    else: 
+        emit("pokoj_juz_istnieje")
 
 @socketio.on("odbierz_plansze")
 def odbierzPlansze(plansza, czyjaTura, numer, liczbaPunktow, gracz, doWygranej):
@@ -55,7 +61,7 @@ def lista_graczy(userName, numer):
         if userName not in users[numer]:
             users[numer].append(userName)
     emit("odbierz_liste_graczy", users[numer], to=numer)
-    print("wysłano liste graczy do pokoju" + numer)
+    print("wysłano liste graczy do pokoju: " + numer)
 
 
 

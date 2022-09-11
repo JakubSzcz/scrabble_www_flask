@@ -8,7 +8,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
         integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
         crossorigin="anonymous"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <meta charset="utf-8">
     <link rel="stylesheet" href="../static/styles.css">
     <link rel="icon" type="image/x-icon" href="../static/img/favicon.png">
@@ -28,20 +28,32 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <!--TODO tu będzie jinja generować to co chcemy -->
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget dolor in justo aliquet egestas sed
-                    quis dolor. Praesent congue mi vitae tempus tincidunt. Suspendisse potenti. Quisque at ex viverra
-                    nisi consectetur iaculis vel vel est. Phasellus vestibulum at turpis at efficitur. Vivamus sem enim,
-                    dictum vel massa nec, pretium tincidunt urna. Aliquam nibh lorem, venenatis non consectetur sit
-                    amet, iaculis quis massa.
-
+                    <form name="frm" action="#" method="post">
+                        <!--TODO do czego wysyłam formularz-->
+                        <div class="form-group my-2">
+                            <label for="roomName">Numer pokoju</label>
+                            <input name="roomName" type="text" class="form-control my-2" id="roomName"
+                                placeholder="Podaj numer pokoju">
+                        </div>
+                        <div class="form-group mt-2 mb-0">
+                            <label for="roomPassword">Hasło pokoju</label>
+                            <input name="roomPassword" type="text" class="form-control my-2" id="roomPassword"
+                                placeholder="Podaj hasło">
+                            <small name="warrning" id="wrongPass" class="form-text text-danger"
+                                style="visibility:hidden; position: absolute; bottom: 3%; left: 3.5%;text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px darkblue"></small>
+                        </div>
+                    </form>
                 </div>
                 <div class="modal-footer">
-                    <button id="startGameModal" type="button" class="btn btn-success">Zacznij gre!</button>
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Zamknij</button>
+                    <label for="submitButton" tabindex="0" class="btn btn-success" type="button" id="joinGameModal"
+                        onclick="return isValid(0);">Zacznij gre!</label>
+                    <!--TODO może nie działać bo submit poza formem, naprawa to z powrotem dać to do wnetrza forma  -->
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal"
+                        onclick="return resetForm(0);">Zamknij</button>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 
     <!-- Modal 1 dolacz do gry-->
@@ -57,27 +69,25 @@
                     <form name="frm" action="#" method="post">
                         <!--TODO do czego wysyłam formularz-->
                         <div class="form-group my-2">
-                            <label for="roomName">Numer pokoju</label>
-                            <input name="roomName" type="text" class="form-control my-2" id="roomName"
+                            <label for="roomName1">Numer pokoju</label>
+                            <input name="roomName1" type="text" class="form-control my-2" id="roomName1"
                                 placeholder="Podaj numer pokoju">
                         </div>
                         <div class="form-group mt-2 mb-0">
-                            <label for="roomPassword">Hasło pokoju</label>
-                            <input name="roomPassword" type="text" class="form-control my-2" id="roomPassword"
+                            <label for="roomPassword1">Hasło pokoju</label>
+                            <input name="roomPassword1" type="text" class="form-control my-2" id="roomPassword1"
                                 placeholder="Podaj hasło">
-                            <small name="warrning" id="wrongPass" class="form-text text-danger"
+                            <small name="warrning1" id="wrongPass1" class="form-text text-danger"
                                 style="visibility:hidden; position: absolute; bottom: 3%; left: 3.5%;text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px darkblue"></small>
                         </div>
-
-                        <!--TODO walidacja hasła, jak złe to komunikat-->
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <label for="submitButton" tabindex="0" class="btn btn-success" type="button" id="joinGameModal"
-                        onclick="return isValid();">Dołącz</label>
+                    <label for="submitButton1" tabindex="0" class="btn btn-success" type="button" id="joinGameModal1"
+                        onclick="return isValid(1);">Dołącz</label>
                     <!--TODO może nie działać bo submit poza formem, naprawa to z powrotem dać to do wnetrza forma  -->
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal"
-                        onclick="return resetForm();">Zamknij</button>
+                        onclick="return resetForm(1);">Zamknij</button>
                 </div>
             </div>
         </div>

@@ -1,11 +1,20 @@
 
 var socket = io.connect('http://127.0.0.1:5000'); //łacze z serwerm
 
-function isValid() {
+function isValid(numerek) {
 
-    let name = document.getElementById("roomName");
-    let password = document.getElementById("roomPassword");
-    let message = document.getElementById("wrongPass");
+    let name;
+    let password;
+    let message;
+    if (numerek === 0) {
+        name = document.getElementById("roomName");
+        password = document.getElementById("roomPassword");
+        message = document.getElementById("wrongPass");
+    } else if (numerek === 1) {
+        name = document.getElementById("roomName1");
+        password = document.getElementById("roomPassword1");
+        message = document.getElementById("wrongPass1");
+    }
     let elements = [name, password];
     let flag = false;
 
@@ -34,11 +43,20 @@ function isValid() {
     return true;
 }
 
-function resetForm() {
+function resetForm(numerek) {
 
-    let name = document.getElementById("roomName");
-    let password = document.getElementById("roomPassword");
-    let message = document.getElementById("wrongPass");
+    let name;
+    let password;
+    let message;
+    if (numerek === 0) {
+        name = document.getElementById("roomName");
+        password = document.getElementById("roomPassword");
+        message = document.getElementById("wrongPass");
+    } else if (numerek === 1) {
+        name = document.getElementById("roomName1");
+        password = document.getElementById("roomPassword1");
+        message = document.getElementById("wrongPass1");
+    }
     let elements = [name, password];
 
     for (let temp of elements) {
@@ -53,10 +71,18 @@ function resetForm() {
 }
 
 $(document).ready(function () {
-    $('#joinGameModal').on('click', function () {
-        console.log("numer" + "testnumeru")
+    $('#joinGameModal').on('click', function () {   //stworz gre
+        //console.log("numer" + "testnumeru")
         var numer = document.getElementById("roomName").value;
         var haslo = document.getElementById("roomPassword").value;
+
+        socket.emit("stworz_gre", numer, haslo)
+    });
+
+    $('#joinGameModal1').on('click', function () {
+        //console.log("numer" + "testnumeru")
+        var numer = document.getElementById("roomName1").value;
+        var haslo = document.getElementById("roomPassword1").value;
 
         socket.emit("dolacz_do_gry", numer, haslo)
     });
@@ -65,5 +91,39 @@ $(document).ready(function () {
         var numer = document.getElementById("roomName").value;
         var haslo = document.getElementById("roomPassword").value;
         window.location.href = "/game" + "?" + numer + "?" + haslo + "?";
+    });
+
+    socket.on("redirect_to_game1", function () {
+        var numer = document.getElementById("roomName1").value;
+        var haslo = document.getElementById("roomPassword1").value;
+        console.log(numer + " " + haslo);
+        window.location.href = "/game" + "?" + numer + "?" + haslo + "?";
+    });
+
+    socket.on("zle_haslo_do_gry", function () {
+        document.getElementById("wrongPass1").innerHTML = "Błąd, niepoprawne haslo!";
+        document.getElementById("roomPassword1").classList.add("is-invalid");
+        try {
+            document.getElementById("roomPassword1").classList.remove("is-valid");
+        } catch { }
+        document.getElementById("wrongPass1").style.visibility = "visible";
+    });
+
+    socket.on("nie_ma_takiego_pokoju", function () {
+        document.getElementById("wrongPass1").innerHTML = "Błąd, nie ma takiego pokoju!";
+        document.getElementById("roomName1").classList.add("is-invalid");
+        try {
+            document.getElementById("roomName1").classList.remove("is-valid");
+        } catch { }
+        document.getElementById("wrongPass1").style.visibility = "visible";
+    });
+
+    socket.on("pokoj_juz_istnieje", function () {
+        document.getElementById("wrongPass").innerHTML = "Błąd, istnieje już taki pokoj!";
+        document.getElementById("roomName").classList.add("is-invalid");
+        try {
+            document.getElementById("roomName").classList.remove("is-valid");
+        } catch { }
+        document.getElementById("wrongPass").style.visibility = "visible";
     });
 });
