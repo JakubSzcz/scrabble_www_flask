@@ -21,23 +21,7 @@ var haslo = numer.substring(
 );
 let slowa = [];
 numer = numer.substring(0, numer.indexOf("?"))
-var polaSpecjalne = {
-    "0,0": "l2",
-    "0,1": "s3",
-    "1,1": "l4",
-    "2,5": "l3",
-    "3,5": "l3",
-    "4,4": "s2",
-    "4,5": "s2",
-    "5,5": "s3",
-    "5,4": "s4",
-    "6,5": "l3",
-    "7,5": "l3",
-    "8,5": "l3",
-    "9,5": "l3",
-    "10,5": "l3",
-    //todo
-}
+var polaSpecjalne = {};
 var literyPunktacja = {
     "A": 1,
     "E": 1,
@@ -132,13 +116,20 @@ for (let i = 0; i < 11; i++) {
         if (i === 1 || i === 9) {
             document.getElementById("literaBtn" + i.toString() + "," + i.toString()).classList.add("btn-slowo2");
             document.getElementById("literaBtn" + i.toString() + "," + (10 - i).toString()).classList.add("btn-slowo2");
+            polaSpecjalne["literaBtn" + i.toString() + "," + i.toString()] = "s2";
+            polaSpecjalne["literaBtn" + (10 - i).toString() + "," + i.toString()] = "s2";
         } else if (i % 2 == 0) {
             document.getElementById("literaBtn" + i.toString() + "," + i.toString()).classList.add("btn-litera2");
             document.getElementById("literaBtn" + i.toString() + "," + (10 - i).toString()).classList.add("btn-litera2");
+            polaSpecjalne["literaBtn" + i.toString() + "," + i.toString()] = "l2";
+            polaSpecjalne["literaBtn" + (10 - i).toString() + "," + i.toString()] = "l2";
+            
         }
         else {
             document.getElementById("literaBtn" + i.toString() + "," + i.toString()).classList.add("btn-litera3");
             document.getElementById("literaBtn" + i.toString() + "," + (10 - i).toString()).classList.add("btn-litera3");
+            polaSpecjalne["literaBtn" + i.toString() + "," + i.toString()] = "l3";
+            polaSpecjalne["literaBtn" + (10 - i).toString() + "," + i.toString()] = "l3";
         }
     }
 }
@@ -148,17 +139,23 @@ document.getElementById("literaBtn5,5").classList.add("btn-start");
 //trojkaty po bokach
 for (let i = 0; i <= 10; i = i + 10) {
     document.getElementById("literaBtn" + (i).toString() + "," + "5").classList.add("btn-litera3");
+    polaSpecjalne["literaBtn" + "5" + "," + (i).toString()] = "s2";
 }
 for (let i = 4; i <= 6; i = i + 2) {
     document.getElementById("literaBtn" + "1" + "," + (i).toString()).classList.add("btn-litera2");
     document.getElementById("literaBtn" + "9" + "," + (i).toString()).classList.add("btn-litera2");
+    polaSpecjalne["literaBtn" + "1" + "," + (i).toString()] = "l2";
+    polaSpecjalne["literaBtn" + "9" + "," + (i).toString()] = "l2";
 }
 for (let i = 0; i <= 10; i = i + 10) {
     document.getElementById("literaBtn" + "5" + "," + (i).toString()).classList.add("btn-slowo2");
+    polaSpecjalne["literaBtn" + (i).toString() + "," + "5"] = "l3";
 }
 for (let i = 4; i <= 6; i = i + 2) {
     document.getElementById("literaBtn" + (i).toString() + "," + "1").classList.add("btn-litera2");
     document.getElementById("literaBtn" + (i).toString() + "," + "9").classList.add("btn-litera2");
+    polaSpecjalne["literaBtn" + (i).toString() + "," + "1"] = "l2";
+    polaSpecjalne["literaBtn" + (i).toString() + "," + "9"] = "l2";
 }
 
 //funkcje
@@ -384,7 +381,8 @@ function zakonczGre(ktoWygral) {
     }
     socket.emit('koniec_gry', doWyslaniaPunktow, ktoWygral, numer)
     socket.emit('poinformuj_o_wygranej', ktoWygral, numer);
-    alert("Gratulacje, wygrałeś!");
+    document.getElementById("infoWygrana").innerHTML = "<b>Gratulacje! Wygrałeś.</b>"
+    $('#staticBackdrop').modal('show');
 }
 
 //sprawdzam czy funkcja o podanych koordynatach ma sasiada
@@ -420,37 +418,6 @@ function czyMaSaiada(t, y) {
     }
     return [sasiedzi, kierunki]
 }
-
-/*function sprawdzPoprawnosc(){
-    let wykluczoneZi = []
-    let wykluczoneZj = []
-    for (let i = 0; i < 11; i++) {
-        for (let j = 0; j < 11; j++) {
-            if ((document.getElementById("literaBtn" + i.toString() + "," + j.toString()).childNodes[0].innerHTML) != ''){
-                //sprawdzam w osi j:
-                tempSlowo = '';
-                t = 0;
-                while ((document.getElementById("literaBtn" + i.toString() + "," + (j+t).toString()).childNodes[0].innerHTML) != '' && !(wykluczoneZj.some((element) => element == [i, (j+t)]))){
-                    tempSlowo = tempSlowo.concat((document.getElementById("literaBtn" + i.toString() + "," + (j+t).toString()).childNodes[0].innerHTML))
-                    wykluczoneZj.push([i, j])
-                    if(j+t == 11) break;
-                    t++;
-                }
-                //sprawdzam w osi i
-                tempSlowo = '';
-                t = 0;
-                while ((document.getElementById("literaBtn" + (i+t).toString() + "," + j.toString()).childNodes[0].innerHTML) != '' && !(wykluczoneZi.some((element) => element == [(i+t), j]))){
-                    tempSlowo = tempSlowo.concat((document.getElementById("literaBtn" + (i+t).toString() + "," + j.toString()).childNodes[0].innerHTML))
-                    wykluczoneZi.push([i, j])
-                    if(i+t == 11) break;
-                    t++;
-                }
-                console.log(wykluczoneZi)
-                console.log(wykluczoneZj)
-            }
-        }
-    }
-}*/
 
 $.get('static/slownik.txt', {}, function (content) { //jaki adres słownika?
     slowa = content.split('\n');
@@ -620,6 +587,10 @@ $(document).ready(function () {//gdy wczyta cały dokument
         //TODO
     });
 
+    $("#koniecGryBtn").on('click', function () {
+        window.location.href = "/main";
+    });
+
     socket.on("connect", function () {
         socket.emit('dolacz_do_gry', numer, haslo)
         socket.emit('lista_graczy', userName, numer);
@@ -665,7 +636,9 @@ $(document).ready(function () {//gdy wczyta cały dokument
     socket.on("informuje_o_wygrnej", function (ktoWygral) {
         if (!wygralem) {
             console.log("test1")
-            alert("Wygrał gracz: " + ktoWygral + ". Powodzenia nastepnym razem!");
+            //alert("Wygrał gracz: " + ktoWygral + ". Powodzenia nastepnym razem!");
+            document.getElementById("infoWygrana").innerHTML = "Wygrał gracz: <b>"+ ktoWygral +"</b>. Powodzenia nastepnym razem!"; 
+            $('#staticBackdrop').modal('show');
         }
     });
 });

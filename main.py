@@ -79,7 +79,6 @@ def koniecGry(liczbaPunktow, ktoWygral, numer):
 
 @socketio.on("poinformuj_o_wygranej")
 def poinformujOWygranej(ktoWygral,numer):
-    print("siema")
     emit("informuje_o_wygrnej",ktoWygral, to=numer)
 
 
