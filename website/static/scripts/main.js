@@ -72,7 +72,6 @@ function resetForm(numerek) {
 
 $(document).ready(function () {
     $('#joinGameModal').on('click', function () {   //stworz gre
-        //console.log("numer" + "testnumeru")
         var numer = document.getElementById("roomName").value;
         var haslo = document.getElementById("roomPassword").value;
 
@@ -80,7 +79,6 @@ $(document).ready(function () {
     });
 
     $('#joinGameModal1').on('click', function () {
-        //console.log("numer" + "testnumeru")
         var numer = document.getElementById("roomName1").value;
         var haslo = document.getElementById("roomPassword1").value;
 
@@ -96,7 +94,6 @@ $(document).ready(function () {
     socket.on("redirect_to_game1", function () {
         var numer = document.getElementById("roomName1").value;
         var haslo = document.getElementById("roomPassword1").value;
-        console.log(numer + " " + haslo);
         window.location.href = "/game" + "?" + numer + "?" + haslo + "?";
     });
 

@@ -1,7 +1,5 @@
-from email import message
-from lib2to3.pgen2.literals import test
 from flask import Blueprint, render_template, request, redirect, url_for
-from .models import User, Game
+from .models import User
 from . import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
@@ -42,7 +40,6 @@ def new_account():
             return render_template("new_account.html", message="Email zajety")
         else:
             new_user = User(email=email, first_name=first_name, password=generate_password_hash(password, method='sha256'))
-            #testowe
             db.session.add(new_user)
             db.session.commit()
             login_user(new_user, remember=True)

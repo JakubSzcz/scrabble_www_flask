@@ -14,15 +14,15 @@ var punktyGraczy; //TODO
 var startGry = true; //flaga sprawdza czy to pierwszy ruch w grze, uzywane przy starcie gry
 var czyjaTura; //string z nazwa gracza ktory wykonuje ruch
 var socket = io.connect('http://127.0.0.1:5000'); //łacze z serwerm
-var numer = window.location.search.substring(1);
-var haslo = numer.substring(
+var numer = window.location.search.substring(1); //numer pokoju
+var haslo = numer.substring( //haslo pokoju
     numer.indexOf("?") + 1,
     numer.lastIndexOf("?")
 );
 let slowa = [];
 numer = numer.substring(0, numer.indexOf("?"))
-var polaSpecjalne = {};
-var literyPunktacja = {
+var polaSpecjalne = {}; // slownika z polami specjalnymi dajacymi premie
+var literyPunktacja = { //punktacja za litere
     "A": 1,
     "E": 1,
     "I": 1,
@@ -56,10 +56,10 @@ var literyPunktacja = {
     "Ń": 7,
     "Ź": 9
 }
-var liczbaPunktow = 0;
-var punktowDoWygranej = 200;
-var wygralem = false;
-var pozostaloWymian = 3;
+var liczbaPunktow = 0; //liczba zdobytych punktow przez gracza
+var punktowDoWygranej = 200; //ile punktow trzeba zdobyc aby wygrac
+var wygralem = false; //flaga mowiaca czy osiagnieto limit punktow do wygranej
+var pozostaloWymian = 3; //liczba mozliwych wymian liter na ture
 
 
 // tworzenie DOM
@@ -430,7 +430,6 @@ function czyMaSaiada(t, y) {
             if (document.getElementById("literaBtn" + (t + 1).toString() + "," + (y).toString()).childNodes[0].innerHTML != "") { // w dol
                 sasiedzi = sasiedzi.concat("literaBtn" + (t + 1).toString() + "," + (y).toString())
                 kierunki = kierunki.concat("d")
-                //console.log("dziala w dol")
             }
         } catch { };
     }
@@ -439,7 +438,6 @@ function czyMaSaiada(t, y) {
 
 $.get('static/slownik.txt', {}, function (content) { //jaki adres słownika?
     slowa = content.split('\n');
-    //console.log(slowa[3])
 });
 
 function liczPunkty(historiaRuchow) {
@@ -453,20 +451,15 @@ function liczPunkty(historiaRuchow) {
             if (!(historiaRuchow.includes(czyMaSaiada(y, x)[0][i].valueOf()) || nowiSasiedzi.includes(czyMaSaiada(y, x)[0][i].valueOf()))) {
                 nowiSasiedzi = nowiSasiedzi.concat(czyMaSaiada(y, x)[0][i].valueOf())
                 kierunki = kierunki.concat(czyMaSaiada(y, x)[1][i])
-                //console.log("dodano nowego sasiada")
-                //historiaRuchow = tempHistoriaRuchow.concat(czyMaSaiada(y, x)[i].valueOf())
             }
         }
         for (let i = 0; i < nowiSasiedzi.length; i++) { //dodaję sąsiadów nowododanych sąsiadów lężących w danym kierunku
             x = Number(nowiSasiedzi[i][11])
             y = Number(nowiSasiedzi[i][9])
-            //console.log(czyMaSaiada(y, x)[1])
-            //console.log(kierunki[i].valueOf())
             if (czyMaSaiada(y, x)[1].includes(kierunki[i].valueOf())) {
                 if (!(historiaRuchow.includes(czyMaSaiada(y, x)[0][czyMaSaiada(y, x)[1].indexOf(kierunki[i].valueOf())]) || nowiSasiedzi.includes(czyMaSaiada(y, x)[0][czyMaSaiada(y, x)[1].indexOf(kierunki[i].valueOf())]))) {
                     nowiSasiedzi = nowiSasiedzi.concat(czyMaSaiada(y, x)[0][czyMaSaiada(y, x)[1].indexOf(kierunki[i].valueOf())])
                     kierunki = kierunki.concat(kierunki[i].valueOf())
-                    //console.log("dodano nowego sasiada")
                 }
             }
 
@@ -474,7 +467,6 @@ function liczPunkty(historiaRuchow) {
         kostkiDoPoliczenia = Array.from(new Set(kostkiDoPoliczenia.concat(nowiSasiedzi)))
     }
     kostkiDoPoliczenia = Array.from(new Set(kostkiDoPoliczenia.concat(historiaRuchow)))
-    //console.log(kostkiDoPoliczenia)
     let sumaPunktow = 0
     let premiaSlowna = 1
     for (let i = 0; i < kostkiDoPoliczenia.length; i++) {
@@ -483,14 +475,12 @@ function liczPunkty(historiaRuchow) {
         if (x.toString() + "," + y.toString() in polaSpecjalne) {
             if (polaSpecjalne[x.toString() + "," + y.toString()][0].valueOf() == "l") {
                 console.log("premia literowa" + polaSpecjalne[x.toString() + "," + y.toString()][1])
-                //console.log(polaSpecjalne[x.toString() + "," + y.toString()][1])
                 sumaPunktow = sumaPunktow + (Number(polaSpecjalne[x.toString() + "," + y.toString()][1]) * literyPunktacja[document.getElementById("literaBtn" + y.toString() + "," + x.toString()).childNodes[0].innerHTML])
                 polaSpecjalne[x.toString() + "," + y.toString()] = polaSpecjalne[x.toString() + "," + y.toString()][0] + "1"
             }
             if (polaSpecjalne[x.toString() + "," + y.toString()][0].valueOf() == "s") {
                 console.log("premiaSlowna" + polaSpecjalne[x.toString() + "," + y.toString()][1])
                 premiaSlowna = premiaSlowna * Number(polaSpecjalne[x.toString() + "," + y.toString()][1])
-                //console.log(polaSpecjalne[x.toString() + "," + y.toString()])
                 sumaPunktow = sumaPunktow + literyPunktacja[document.getElementById("literaBtn" + y.toString() + "," + x.toString()).childNodes[0].innerHTML]
                 polaSpecjalne[x.toString() + "," + y.toString()] = polaSpecjalne[x.toString() + "," + y.toString()][0] + "1"
             }
@@ -519,12 +509,8 @@ function sprawdzPoprawnosc() {
         liniaI = liniaI.split(" ")
         for (let t = 0; t < liniaI.length; t++) {
             if (liniaI[t].length > 1) {
-                //console.log(liniaI[t])
-                //kod sprawdzający słownik
                 if (slowa.some((element) => element.substring(0, element.length - 1).valueOf() == liniaI[t].toLowerCase().valueOf())) {
-                    //return true
                 } else {
-                    //console.log(liniaI[t].toLowerCase())
                     return false
                 }
             }
@@ -542,12 +528,9 @@ function sprawdzPoprawnosc() {
         liniaJ = liniaJ.split(" ")
         for (let t = 0; t < liniaJ.length; t++) {
             if (liniaJ[t].length > 1) {
-                //console.log(liniaJ[t])
                 //kod sprawdzający słownik
                 if (slowa.some((element) => element.substring(0, element.length - 1).valueOf() == liniaJ[t].toLowerCase().valueOf())) {
-                    //return true
                 } else {
-                    //console.log(liniaJ[t].toLowerCase())
                     return false
                 }
             }
@@ -564,7 +547,6 @@ function koniecRuchow() {
 //obsługa socketow
 $(document).ready(function () {//gdy wczyta cały dokument
     userName = document.getElementById("userNameinfo").innerHTML.slice(0, -1); //bierze nazwe gracza
-    //socket.emit('lista_graczy', userName); //emituje do wydarzenia lista graczy zmienna userName
     socket.on('message', function (data) { //na wydarzenie message wykonuje funkcje ze zmienna data
         let msg, czyjaTuraSerwer, punktyWyswietl, graczSerwer, doWygranej; //json data zamieniany na msg- json planszy, czyja tura String
         msg = data["plansza"];
@@ -641,8 +623,6 @@ $(document).ready(function () {//gdy wczyta cały dokument
 
     socket.on("odbierz_liste_graczy", function (users) { //odbiera zmienna z lista graczy od serwera na wydarzeniu odbierz_liste_graczy
         listaGraczy = users;
-        //console.log("odebrano liste graczy")
-        //TODO if lista graczy == 1 nie zaczniesz bo za mało graczy
         let tabelaUserow = document.getElementById("listaUzytkownikow"); //tworze i wypełniam tablice z graczami
         for (let i = 0; i < listaGraczy.length; i++) {
             if (tabelaUserow.rows.length != listaGraczy.length) {
@@ -676,8 +656,6 @@ $(document).ready(function () {//gdy wczyta cały dokument
 
     socket.on("informuje_o_wygrnej", function (ktoWygral) {
         if (!wygralem) {
-            console.log("test1")
-            //alert("Wygrał gracz: " + ktoWygral + ". Powodzenia nastepnym razem!");
             document.getElementById("infoWygrana").innerHTML = "Wygrał gracz: <b>" + ktoWygral + "</b>. Powodzenia nastepnym razem!";
             $('#staticBackdrop').modal('show');
         }
