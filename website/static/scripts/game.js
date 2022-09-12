@@ -116,20 +116,20 @@ for (let i = 0; i < 11; i++) {
         if (i === 1 || i === 9) {
             document.getElementById("literaBtn" + i.toString() + "," + i.toString()).classList.add("btn-slowo2");
             document.getElementById("literaBtn" + i.toString() + "," + (10 - i).toString()).classList.add("btn-slowo2");
-            polaSpecjalne["literaBtn" + i.toString() + "," + i.toString()] = "s2";
-            polaSpecjalne["literaBtn" + (10 - i).toString() + "," + i.toString()] = "s2";
+            polaSpecjalne[i.toString() + "," + i.toString()] = "s2";
+            polaSpecjalne[(10 - i).toString() + "," + i.toString()] = "s2";
         } else if (i % 2 == 0) {
             document.getElementById("literaBtn" + i.toString() + "," + i.toString()).classList.add("btn-litera2");
             document.getElementById("literaBtn" + i.toString() + "," + (10 - i).toString()).classList.add("btn-litera2");
-            polaSpecjalne["literaBtn" + i.toString() + "," + i.toString()] = "l2";
-            polaSpecjalne["literaBtn" + (10 - i).toString() + "," + i.toString()] = "l2";
+            polaSpecjalne[i.toString() + "," + i.toString()] = "l2";
+            polaSpecjalne[(10 - i).toString() + "," + i.toString()] = "l2";
             
         }
         else {
             document.getElementById("literaBtn" + i.toString() + "," + i.toString()).classList.add("btn-litera3");
             document.getElementById("literaBtn" + i.toString() + "," + (10 - i).toString()).classList.add("btn-litera3");
-            polaSpecjalne["literaBtn" + i.toString() + "," + i.toString()] = "l3";
-            polaSpecjalne["literaBtn" + (10 - i).toString() + "," + i.toString()] = "l3";
+            polaSpecjalne[i.toString() + "," + i.toString()] = "l3";
+            polaSpecjalne[(10 - i).toString() + "," + i.toString()] = "l3";
         }
     }
 }
@@ -139,23 +139,23 @@ document.getElementById("literaBtn5,5").classList.add("btn-start");
 //trojkaty po bokach
 for (let i = 0; i <= 10; i = i + 10) {
     document.getElementById("literaBtn" + (i).toString() + "," + "5").classList.add("btn-litera3");
-    polaSpecjalne["literaBtn" + "5" + "," + (i).toString()] = "s2";
+    polaSpecjalne["5" + "," + (i).toString()] = "s2";
 }
 for (let i = 4; i <= 6; i = i + 2) {
     document.getElementById("literaBtn" + "1" + "," + (i).toString()).classList.add("btn-litera2");
     document.getElementById("literaBtn" + "9" + "," + (i).toString()).classList.add("btn-litera2");
-    polaSpecjalne["literaBtn" + "1" + "," + (i).toString()] = "l2";
-    polaSpecjalne["literaBtn" + "9" + "," + (i).toString()] = "l2";
+    polaSpecjalne["1" + "," + (i).toString()] = "l2";
+    polaSpecjalne["9" + "," + (i).toString()] = "l2";
 }
 for (let i = 0; i <= 10; i = i + 10) {
     document.getElementById("literaBtn" + "5" + "," + (i).toString()).classList.add("btn-slowo2");
-    polaSpecjalne["literaBtn" + (i).toString() + "," + "5"] = "l3";
+    polaSpecjalne[(i).toString() + "," + "5"] = "l3";
 }
 for (let i = 4; i <= 6; i = i + 2) {
     document.getElementById("literaBtn" + (i).toString() + "," + "1").classList.add("btn-litera2");
     document.getElementById("literaBtn" + (i).toString() + "," + "9").classList.add("btn-litera2");
-    polaSpecjalne["literaBtn" + (i).toString() + "," + "1"] = "l2";
-    polaSpecjalne["literaBtn" + (i).toString() + "," + "9"] = "l2";
+    polaSpecjalne[(i).toString() + "," + "1"] = "l2";
+    polaSpecjalne[(i).toString() + "," + "9"] = "l2";
 }
 
 //funkcje
