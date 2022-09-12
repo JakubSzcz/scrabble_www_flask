@@ -59,6 +59,7 @@ var literyPunktacja = {
 var liczbaPunktow = 0;
 var punktowDoWygranej = 200;
 var wygralem = false;
+var pozostaloWymian = 3;
 
 
 // tworzenie DOM
@@ -123,7 +124,7 @@ for (let i = 0; i < 11; i++) {
             document.getElementById("literaBtn" + i.toString() + "," + (10 - i).toString()).classList.add("btn-litera2");
             polaSpecjalne["literaBtn" + i.toString() + "," + i.toString()] = "l2";
             polaSpecjalne["literaBtn" + (10 - i).toString() + "," + i.toString()] = "l2";
-            
+
         }
         else {
             document.getElementById("literaBtn" + i.toString() + "," + i.toString()).classList.add("btn-litera3");
@@ -183,6 +184,11 @@ function kopiujWartosc(przycisk) {
         document.getElementById("potwierdzRuchBtn").classList.remove("disabled");
         document.getElementById("pominTureBtn").classList.remove("disabled");
         document.getElementById("wymienLitereBtn").innerHTML = "Wymień literę"; //powrot do starego napisu
+        pozostaloWymian--;
+        document.getElementById("liczbaWymian").innerHTML = pozostaloWymian;
+        if (pozostaloWymian === 0) {
+            koniecRuchow();
+        }
     }
 }
 
@@ -195,7 +201,9 @@ function skopiujWartosc(przycisk1) {
             przycisk1.classList.add("active"); //zmiana wygladu
             historiaRuchow.push(przycisk1.id); //dodanie ruchu do historii
             document.getElementById("cofnijRuchBtn").classList.remove("disabled");//odblokowanie przyciskow
-            document.getElementById("wymienLitereBtn").classList.remove("disabled");
+            if (!pozostaloWymian == 0) {
+                document.getElementById("wymienLitereBtn").classList.remove("disabled");
+            }
             document.getElementById("potwierdzRuchBtn").classList.remove("disabled");
             document.getElementById("pominTureBtn").classList.remove("disabled");
             document.getElementById(historiaRuchowReka[historiaRuchowReka.length - 1]).classList.add("btn-primary");//powrot wybranej litery do wczesniejszego koloru
@@ -256,7 +264,9 @@ function aktywuj_przyciki() {
     document.getElementById("cofnijRuchBtn").classList.remove("disabled");
     document.getElementById("potwierdzRuchBtn").classList.remove("disabled");
     document.getElementById("pominTureBtn").classList.remove("disabled");
-    document.getElementById("wymienLitereBtn").classList.remove("disabled");
+    if (!pozostaloWymian == 0) {
+        document.getElementById("wymienLitereBtn").classList.remove("disabled");
+    }
     //przyciski z literami
     for (let i = 0; i < 2; i++) {
         for (let j = 0; j < 4; j++) {
@@ -285,6 +295,12 @@ function dezaktywuj_przyciski() {
 
 //funkcj odpala sie po naciśnieciu przycisku potwierdz ruch, usuwa historie ruchow, losuje nowe litery i włącza je znów do użycia
 function potwierdzRuch() {
+
+    if (historiaRuchow.length === 0 && pozostaloWymian == 0) { // jesli wymienilem 3 litery
+        alert("Nie można potwierdzić ruchu! Pomiń ture.")
+        return 0;
+    }
+
     if (historiaRuchow.length === 0) {//sprawdza czy wykonano jakikolwiek ruch przed potwierdzeniem
         alert("Nie można potwierdzic ruchu");
         return 0;
@@ -358,6 +374,8 @@ function potwierdzRuch() {
     socket.emit('odbierz_plansze', parsujPlansze(), czyjaTura, numer, liczbaPunktow, userName, punktowDoWygranej);
     mojaTura = false; //bo przesłaniu jsona z plansza zmieniam moja ture na false i dezaktywuje plansze
     dezaktywuj_przyciski();
+    pozostaloWymian = 3;
+    document.getElementById("liczbaWymian").innerHTML = pozostaloWymian;
 }
 
 //funkcja parsuje całą plansze z literami do jsona
@@ -374,9 +392,9 @@ function parsujPlansze() {
 
 function zakonczGre(ktoWygral) {
     let doWyslaniaPunktow = {};
-    for(let user of listaGraczy){
+    for (let user of listaGraczy) {
         let indeksGracza = listaGraczy.indexOf(user).toString();
-        let temp = document.getElementById("wynikGracza"+ indeksGracza).innerHTML;
+        let temp = document.getElementById("wynikGracza" + indeksGracza).innerHTML;
         doWyslaniaPunktow[user] = temp;
     }
     socket.emit('koniec_gry', doWyslaniaPunktow, ktoWygral, numer)
@@ -538,6 +556,11 @@ function sprawdzPoprawnosc() {
     return true;
 }
 
+//jesli wymienilem 3 litery musze pominac ture
+function koniecRuchow() {
+    document.getElementById("wymienLitereBtn").classList.add("disabled");
+}
+
 //obsługa socketow
 $(document).ready(function () {//gdy wczyta cały dokument
     userName = document.getElementById("userNameinfo").innerHTML.slice(0, -1); //bierze nazwe gracza
@@ -584,7 +607,25 @@ $(document).ready(function () {//gdy wczyta cały dokument
     });
 
     $('#pominTureBtn').on('click', function () {
-        //TODO
+        let temp_leng = historiaRuchow.length;
+        for (let x = 0; x < temp_leng; x++) {// czyszcze plansze
+            cofnijRuch();
+        }
+        //zmiana tury, jeśli indeks wiekszy niz dlugosc tablicy z graczami to zmienia ture od poczatku, kolejnosc graczy w zaleznosci od dolaczenia
+        {
+            let id = listaGraczy.indexOf(czyjaTura);
+            if (id === listaGraczy.length - 1) {
+                czyjaTura = listaGraczy[0];
+            } else {
+                czyjaTura = listaGraczy[id + 1];
+            }
+        }
+        //emituje na event odbierz_plansze zmienne parsujPlansze i czyjaTura
+        socket.emit('odbierz_plansze', parsujPlansze(), czyjaTura, numer, liczbaPunktow, userName, punktowDoWygranej);
+        mojaTura = false; //bo przesłaniu jsona z plansza zmieniam moja ture na false i dezaktywuje plansze
+        pozostaloWymian = 3;
+        document.getElementById("liczbaWymian").innerHTML = pozostaloWymian;
+        dezaktywuj_przyciski();
     });
 
     $("#koniecGryBtn").on('click', function () {
@@ -637,8 +678,9 @@ $(document).ready(function () {//gdy wczyta cały dokument
         if (!wygralem) {
             console.log("test1")
             //alert("Wygrał gracz: " + ktoWygral + ". Powodzenia nastepnym razem!");
-            document.getElementById("infoWygrana").innerHTML = "Wygrał gracz: <b>"+ ktoWygral +"</b>. Powodzenia nastepnym razem!"; 
+            document.getElementById("infoWygrana").innerHTML = "Wygrał gracz: <b>" + ktoWygral + "</b>. Powodzenia nastepnym razem!";
             $('#staticBackdrop').modal('show');
         }
     });
+    document.getElementById("liczbaWymian").innerHTML = pozostaloWymian;
 });
